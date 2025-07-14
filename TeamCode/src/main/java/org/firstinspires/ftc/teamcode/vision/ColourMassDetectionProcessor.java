@@ -173,7 +173,7 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
         // if we didn't find any contours which were large enough, sets it to be unfound
         PropPositions propPosition;
         if (largestContour == null) {
-            propPosition = PropPositions.UNFOUND;
+            propPosition = PropPositions.LEFT;
         } else if (largestContourX < left.getAsDouble()) {
             propPosition = PropPositions.LEFT;
         } else if (largestContourX > right.getAsDouble()) {
@@ -185,9 +185,6 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
         // if we have found a new prop position, and it is not unfound, updates the recorded position,
         // this makes sure that if our camera is playing up, we only need to see the prop in the correct position
         // and we will hold onto it
-        if (propPosition != previousPropPosition && propPosition != PropPositions.UNFOUND) {
-            recordedPropPosition = PropPositions.LEFT;
-        }
 
         // updates the previous prop position to help us check for changes
         previousPropPosition = propPosition;

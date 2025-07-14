@@ -16,6 +16,7 @@ import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
+import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 import com.qualcomm.robotcore.util.ElapsedTime;
 
@@ -46,10 +47,10 @@ public class DetermineBarnacle {
 
     static Pose2d pose;
 
-    public DetermineBarnacle(double minArea, double left, double right, Pose2d poseGiven) {
-        this.pose = poseGiven;
+    public DetermineBarnacle(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2) {
+        pose = poseGiven;
 
-        robot = new AllMechs(hardwareMap, (int)(left), (int)right, gamepad1, gamepad2);
+        robot = new AllMechs(hardwareMap, left, right, gamepad1, gamepad2);
 
         colourMassDetectionProcessor = new ColourMassDetectionProcessor(
                 () -> minArea,
@@ -69,22 +70,18 @@ public class DetermineBarnacle {
 
     public Action detectTarget() {
 
-        return new Action() {
-
-            @Override
-            public boolean run(@NonNull TelemetryPacket telemetryPacket) {
+            return p -> {
                 if (visionPortal.getCameraState() == STREAMING) {
                     recordedBarnaclePosition = colourMassDetectionProcessor.getRecordedPropPosition();
                 } else {
-                    recordedBarnaclePosition = EnhancedColorDetectionProcessor.PropPositions.UNFOUND;
+                    recordedBarnaclePosition = colourMassDetectionProcessor.getRecordedPropPosition();
                 }
 
                 visionPortal.stopLiveView();
                 visionPortal.stopStreaming();
 
                 return false;
-            }
-        };
+            };
 
     }
 
@@ -96,16 +93,16 @@ public class DetermineBarnacle {
             case MIDDLE:
                 targetSampleTrajectory = drive.actionBuilder(pose)
                         .turnTo(Math.toRadians(65))
-                        .stopAndAdd(
-                                new ParallelAction(
-                                        robot.setHorTarget(700),
-                                        robot.checkColorRed()
-                                )
-                        )
+//                        .stopAndAdd(
+//                                new ParallelAction(
+//                                        robot.setHorTarget(700),
+//                                        robot.checkColorRed()
+//                                )
+//                        )
                         .setTangent(0)
-                        .stopAndAdd(new ParallelAction(
-
-                        ))
+//                        .stopAndAdd(new ParallelAction(
+//
+//                        ))
                         .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), -Math.PI)
                         // add the deposit action for the sample it holds
                         .setTangent(0)

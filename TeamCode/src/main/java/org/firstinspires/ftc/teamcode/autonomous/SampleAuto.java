@@ -15,7 +15,7 @@ import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
 import org.opencv.core.Mat;
 
-@Autonomous(name = "Sample Side Auto")
+@Autonomous(name = "Sample Side Auto", group = "robot")
 public class SampleAuto extends MasterAuto {
     ActionSchedular actionSchedular;
     DetermineBarnacle determineBarnacle;
@@ -26,12 +26,33 @@ public class SampleAuto extends MasterAuto {
     SampleAuto() {
         actionSchedular = new ActionSchedular();
     }
+//
+//    @Override
+//    protected void onInit() {
+//
+//    }
+    private TrajectoryActionBuilder wholeSequence(TrajectoryActionBuilder builder) {
+        builder = builder
 
-    @Override
-    protected void onInit() {
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose);
+                .setReversed(false)
+                .splineToLinearHeading(new Pose2d(-52, -52 , Math.toRadians(45)), -Math.PI)
+                // deposit the sample that is with the robot
+                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
+                // Add the Anonymous Action for the Vision.
+                .stopAndAdd(
+                        new SequentialAction(
+                                determineBarnacle.detectTarget(),
+                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
+                                telemetryPacket -> {
+                                    actionSchedular.run();
+                                    return DetermineBarnacle.getTargetSampleTrajectory().run(telemetryPacket);
+                                }
+                        )
+                );
+
+        return builder;
     }
-
+    @Override
     protected Action onRun() {
         TrajectoryActionBuilder builder = drive.actionBuilder(startPose);
 
@@ -43,26 +64,7 @@ public class SampleAuto extends MasterAuto {
 
 
 
-    private TrajectoryActionBuilder wholeSequence(TrajectoryActionBuilder builder) {
-        builder = builder
 
-                .setReversed(false)
-                .splineToLinearHeading(new Pose2d(-52, -52 , Math.toRadians(45)), -Math.PI)
-                // deposit the sample that is with the robot
-                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-                // Add the Anonymous Action for the Vision.
-                .stopAndAdd(
-                        new SequentialAction(
-                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-                                telemetryPacket -> {
-                                    actionSchedular.run();
-                                    return DetermineBarnacle.getTargetSampleTrajectory().run(telemetryPacket);
-                                }
-                        )
-                );
-
-        return builder;
-    }
 
 
 
