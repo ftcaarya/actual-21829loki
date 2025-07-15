@@ -37,9 +37,10 @@ public abstract class MasterAuto extends LinearOpMode {
 
         telemetry.addData("Testing Init:", "running");
 
-        Action action = onRun();
 
         waitForStart();
+
+        Action action = onRun();
 
         resetRuntime();
 
@@ -51,9 +52,7 @@ public abstract class MasterAuto extends LinearOpMode {
                     )
             );
 
-
     }
 
     protected abstract Action onRun();
-//    protected void onInit() {};
 }

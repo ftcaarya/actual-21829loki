@@ -55,10 +55,10 @@ public class AllMechs {
     public static double wrist_right_down = 0;
     public static double wrist_right_up = 1;
 
-    public static double arm_left_up = .8;
+    public static double arm_left_up = .85;
     public static double arm_left_down = 0.32;
 
-    public static double arm_right_up = 0.2;
+    public static double arm_right_up = 0.15;
     public static double arm_right_down = 0.68;
 
     public static double arm_left_wait = 0.52;
@@ -187,13 +187,13 @@ public class AllMechs {
         pooper = hardwareMap.get(Servo.class, "pooper");
 
 
-        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
-                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()
-        );
-
-        camera = OpenCvCameraFactory.getInstance().createWebcam(
-                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
-        );
+//        int cameraMonitorViewId = hardwareMap.appContext.getResources().getIdentifier(
+//                "cameraMonitorViewId", "id", hardwareMap.appContext.getPackageName()
+//        );
+//
+//        camera = OpenCvCameraFactory.getInstance().createWebcam(
+//                hardwareMap.get(WebcamName.class, "Webcam 1"), cameraMonitorViewId
+//        );
         controller_right = new PIDController(p, i, d);
 
 //        IMU imu = hardwareMap.get(IMU.class, "imu");
@@ -207,17 +207,17 @@ public class AllMechs {
         double upperH = 180; // the upper hsv threshold for your detection
         double minArea = 100; // the minimum area for the detection to consider for your prop
 
-        colourMassDetectionProcessor = new EnhancedColorDetectionProcessor(
+//        colourMassDetectionProcessor = new EnhancedColorDetectionProcessor(
+//
+//                () -> minArea,
+//                () -> left, // the left dividing line, in this case the left third of the frame
+//                () -> right, // the left dividing line, in this case the right third of the frame
+//                EnhancedColorDetectionProcessor.StartPositions.SAMPLE
+//        );
 
-                () -> minArea,
-                () -> left, // the left dividing line, in this case the left third of the frame
-                () -> right, // the left dividing line, in this case the right third of the frame
-                EnhancedColorDetectionProcessor.StartPositions.SAMPLE
-        );
-
-        visionPortal = new VisionPortal.Builder()
-                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                .build();
+//        visionPortal = new VisionPortal.Builder()
+//                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+//                .build();
     }
 
     public Action setVertTarget(int target) {
