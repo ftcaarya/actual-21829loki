@@ -113,9 +113,7 @@ public class TeleOpTesting extends OpMode {
         if (gamepad1.dpad_right) {
             runningActions.add(
 
-                    robot.setExtTarget(-400)
-
-
+                    robot.setExtTarget(-450)
             );
             horToggle = true;
         }
@@ -125,10 +123,11 @@ public class TeleOpTesting extends OpMode {
                     robot.setExtTarget(-20)
             );
         }
+
         if (gamepad1.dpad_left && horToggle) {
 
             runningActions.add(
-                    robot.setExtTarget(150)
+                    robot.setExtTarget(225)
             );
         }
         if (gamepad1.left_bumper) {

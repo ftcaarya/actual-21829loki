@@ -325,7 +325,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.75);
+            hold.setPosition(.7);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
