@@ -230,12 +230,12 @@ public class AllMechs {
                         clawOpen()
                 ),
                 new SleepAction(0.5),
-                setExtTarget(150),
+                setExtTarget(100),
                 armDown(),
                 clawClose(),
                 new SleepAction(1),
                 new ParallelAction(
-                setVertTarget(2790),
+                setVertTarget(-2700),
                 armUp(),
                 wristUp()
         )
@@ -325,7 +325,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.7);
+            hold.setPosition(.8);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
@@ -347,7 +347,7 @@ public class AllMechs {
                 pooper.setPosition(POOPER_PASS);
                 gamepad1.setLedColor(0, 0, 225, 5000);
                 gamepad1.rumbleBlips(1);
-                intake.setPower(-.65);
+                intake.setPower(-.7);
                 return true;
             } else if (gamepad1.square) {
                 pooper.setPosition(POOPER_BLOCK);

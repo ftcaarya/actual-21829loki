@@ -113,7 +113,7 @@ public class TeleOpTesting extends OpMode {
         if (gamepad1.dpad_right) {
             runningActions.add(
 
-                    robot.setExtTarget(-450)
+                    robot.setExtTarget(-400)
             );
             horToggle = true;
         }
@@ -127,7 +127,7 @@ public class TeleOpTesting extends OpMode {
         if (gamepad1.dpad_left && horToggle) {
 
             runningActions.add(
-                    robot.setExtTarget(225)
+                    robot.setExtTarget(100)
             );
         }
         if (gamepad1.left_bumper) {
@@ -178,26 +178,7 @@ public class TeleOpTesting extends OpMode {
                     robot.intakeBack()
             );
         }
-//        if (currentGamepad1.cross && !previousGamepad1.cross) {
-//            intakeInToggle = !intakeInToggle;
-//        }
-//        if (intakeInToggle) {
-//            runningActions.add(
-//                    new InstantAction(() ->
-//                            robot.intake.setPower(-0.5)
-//                    ));
 //
-//        }
-//        if (currentGamepad1.triangle && !previousGamepad1.triangle) {
-//            intakeOutToggle = !intakeOutToggle;
-//        }
-//        if (intakeOutToggle) {
-//            runningActions.add(
-//                    new InstantAction(() ->
-//                            robot.intake.setPower(.5)
-//                    ));
-//
-//        }
 
 
 
