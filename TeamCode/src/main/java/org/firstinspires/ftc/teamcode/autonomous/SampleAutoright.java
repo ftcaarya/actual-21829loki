@@ -2,7 +2,6 @@ package org.firstinspires.ftc.teamcode.autonomous;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
-import com.acmerobotics.dashboard.telemetry.TelemetryPacket;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
 import com.acmerobotics.roadrunner.ParallelAction;
@@ -13,26 +12,18 @@ import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
-import org.opencv.core.Mat;
 
-import java.util.ArrayList;
-import java.util.List;
-
-@Autonomous(name = "Sample Side Auto", group = "robot")
-public class SampleAuto extends OpMode {
-//    ActionSchedular actionSchedular;
+@Autonomous(name = "Sample Side Auto right", group = "robot")
+public class SampleAutoright extends OpMode {
+    ActionSchedular actionSchedular;
     DetermineBarnacle determineBarnacle;
     PinpointDrive drive;
-    private final FtcDashboard dash = FtcDashboard.getInstance();
-    private List<Action> runningActions = new ArrayList<>();
 //    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
     Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
     MultipleTelemetry mTelemetry;
@@ -41,7 +32,7 @@ public class SampleAuto extends OpMode {
 
     @Override
     public void init() {
-//        actionSchedular = new ActionSchedular();
+        actionSchedular = new ActionSchedular();
 
         Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
         Pose2d initialPose = new Pose2d(-35, -63, Math.toRadians(90));
@@ -70,7 +61,7 @@ public class SampleAuto extends OpMode {
         TrajectoryActionBuilder builder = drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)));
 //        Action action = wholeSequence().build();
 
-            runningActions.add(
+        Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
                                 .stopAndAdd(
@@ -102,10 +93,8 @@ public class SampleAuto extends OpMode {
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),
                                                 new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-                                                new InstantAction(() -> {
-                                                    Action traj = DetermineBarnacle.getTargetSampleTrajectory();
-                                                    if (traj != null) runningActions.add(traj);
-                                                })
+//                                    actionSchedular.run();
+                                                DetermineBarnacle.getTargetSampleTrajectory()
 
                                         )
                                 ).build()),
@@ -117,18 +106,7 @@ public class SampleAuto extends OpMode {
 
     @Override
     public void loop() {
-        TelemetryPacket packet = new TelemetryPacket();
 
-        List<Action> newActions = new ArrayList<>();
-        for (Action action : runningActions) {
-            action.preview(packet.fieldOverlay());
-            if (action.run(packet)) {
-                newActions.add(action);
-            }
-        }
-        runningActions = newActions;
-
-        dash.sendTelemetryPacket(packet);
     }
 
 
