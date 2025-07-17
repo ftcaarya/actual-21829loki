@@ -18,6 +18,7 @@ import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
+import org.opencv.core.Mat;
 
 @Autonomous(name = "Sample Side Auto middle", group = "robot")
 public class SampleAutomiddle extends OpMode {
@@ -43,7 +44,7 @@ public class SampleAutomiddle extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2);
+        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive);
 
 //        onInit();
 
@@ -64,8 +65,12 @@ public class SampleAutomiddle extends OpMode {
         Actions.runBlocking(
                 new ParallelAction(
                         new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                                .stopAndAdd(
-                                        new InstantAction(() -> robot.hold.setPosition(.75))
+                                .stopAndAdd( new ParallelAction(
+                                                new InstantAction(() -> robot.hold.setPosition(.3) ),
+                                                robot.rotateHor(),
+                                                robot.clawClose()
+                                )
+
 
                                 )
                                 .setReversed(false)
@@ -73,6 +78,7 @@ public class SampleAutomiddle extends OpMode {
                                         new SequentialAction(
                                                 robot.setVertTarget(-2700),
                                                 new ParallelAction(
+                                                        robot.rotateHor(),
                                                         robot.clawClose(),
                                                         robot.armUp(),
                                                         robot.wristUp()
@@ -80,46 +86,55 @@ public class SampleAutomiddle extends OpMode {
                                         )
                                 )
 
-                                .splineToLinearHeading(new Pose2d(-60, -62 , Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-58, -63 , Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                new SleepAction(1),
+                                                new SleepAction(0.6),
                                                 robot.clawOpen(),
+                                                new SleepAction(0.6),
                                                 robot.armWait(),
                                                 robot.wristDown(),
-                                                robot.setVertTarget(0)
+                                                robot.setVertTarget(0),
+                                                new InstantAction(()-> robot.hold.setPosition(0.8))
+
+
                                         )
                                 )
-                                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-                                .turnTo(Math.toRadians(68))
+                                .strafeToLinearHeading(new Vector2d(-53, -45), Math.toRadians(90))
+                                .turnTo(Math.toRadians(72))
                         .stopAndAdd(
                                 new ParallelAction(
-                                        robot.setExtTarget(-200),
-                                        robot.checkColorRed()
+                                        robot.checkColorRed(),
+                                        new SleepAction(1),
+                                        robot.setExtTarget(-210)
+
 
 
                                 )
                         )
+                                .splineToConstantHeading(new Vector2d(-52, -43), Math.toRadians(72))
 
                                 .stopAndAdd(
                                         new SequentialAction(
 
                                                 robot.intakeIn(),
-                                                new SleepAction(1),
+                                                new SleepAction(0.3),
                                                 robot.stopIntake()
 
 
-                                        )
+
+
+                                                )
                                 )
                                 .setTangent(0)
 
                         .stopAndAdd(
                                 new ParallelAction(
-                                        new InstantAction(() -> robot.hold.setPosition(.75)),
+                                        new InstantAction(() -> robot.hold.setPosition(.3)),
                                         robot.setExtTarget(100)
                                 )
                         )
-                                .splineToLinearHeading(new Pose2d(-60, -60, Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.armDown(),
@@ -135,7 +150,8 @@ public class SampleAutomiddle extends OpMode {
                                                 new SleepAction(.5),
                                                 robot.armWait(),
                                                 robot.wristDown(),
-                                                robot.setVertTarget(0)
+                                                robot.setVertTarget(0),
+                                                new InstantAction(()-> robot.hold.setPosition(0.75))
                                         )
 
                                 )
@@ -145,24 +161,36 @@ public class SampleAutomiddle extends OpMode {
                                 // add the intake for the middle sample
                                 .stopAndAdd(
                                         new ParallelAction(
-                                                robot.setExtTarget(-200),
-                                                robot.checkColorRed()
+                                                robot.checkColorRed(),
+                                                new SleepAction(1),
+                                                robot.setExtTarget(-120)
+                                        )
+                                )
+                                .splineToConstantHeading(new Vector2d(-58, -44), Math.toRadians(95))
+                                .stopAndAdd(
+                                        new SequentialAction(
+
+                                                robot.intakeIn(),
+                                                new SleepAction(0.5),
+                                                robot.stopIntake()
+
                                         )
                                 )
                                 .setTangent(0)
 
                                 .stopAndAdd(
                                         new ParallelAction(
-                                                new InstantAction(() -> robot.hold.setPosition(.75)),
+                                                new InstantAction(() -> robot.hold.setPosition(.3)),
                                                 robot.setExtTarget(100)
                                         )
                                 )
-                                .splineToLinearHeading(new Pose2d(-60, -60, Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.armDown(),
                                                 robot.clawClose(),
-                                                robot.setVertTarget(-2790),
+                                                new SleepAction(1),
+                                                robot.setVertTarget(-2700),
                                                 new ParallelAction(
                                                         robot.armUp(),
                                                         robot.wristUp()

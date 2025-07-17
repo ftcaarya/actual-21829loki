@@ -10,11 +10,12 @@ import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 
 import org.firstinspires.ftc.teamcode.MecanumDrive;
+import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
 
 public abstract class MasterAuto extends LinearOpMode {
-    MecanumDrive drive;
+    PinpointDrive drive;
     MultipleTelemetry mTelemetry;
     AllMechs robot;
 
@@ -24,14 +25,14 @@ public abstract class MasterAuto extends LinearOpMode {
     @Override
     public void runOpMode() throws InterruptedException {
         Pose2d initialPose = new Pose2d(-35, -63, Math.toRadians(90));
-        drive = new MecanumDrive(hardwareMap, initialPose);
+        drive = new PinpointDrive(hardwareMap, initialPose);
 
         Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
 
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2);
+        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive);
 
 //        onInit();
 
