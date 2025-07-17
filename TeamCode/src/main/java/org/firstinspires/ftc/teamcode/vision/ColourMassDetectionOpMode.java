@@ -18,7 +18,7 @@ public class ColourMassDetectionOpMode extends OpMode {
     private VisionPortal visionPortal;
     private ColourMassDetectionProcessor colourMassDetectionProcessor;
     public Scalar lower, upper;
-    public double minArea;
+    public double minArea = 700;
 
 
 
@@ -37,7 +37,7 @@ public class ColourMassDetectionOpMode extends OpMode {
         // and experiment to fine tune it for blue
         lower = new Scalar(0, 0, 150); // the lower hsv threshold for your detection
         upper = new Scalar(180, 40, 255); // the upper hsv threshold for your detection
-        minArea = 5000; // the minimum area for the detection to consider for your prop
+//        minArea = 700; // the minimum area for the detection to consider for your prop
 
         colourMassDetectionProcessor = new ColourMassDetectionProcessor(
                 () -> minArea, // these are lambda methods, in case we want to change them while the match is running, for us to tune them or something

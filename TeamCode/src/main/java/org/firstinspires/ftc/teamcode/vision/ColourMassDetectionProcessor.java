@@ -32,8 +32,8 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
     private final DoubleSupplier minArea, left, right;
     private final Scalar upper; // lower bounds for masking
     private final Scalar lower; // upper bounds for masking
-//    private final TextPaint textPaint;
-//    private final Paint linePaint;
+    private final TextPaint textPaint;
+    private final Paint linePaint;
     private final ArrayList<MatOfPoint> contours;
     private final Mat hierarchy = new Mat();
     private final Mat sel1 = new Mat(); // these facilitate capturing through 0
@@ -44,8 +44,7 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
     private double largestContourArea;
     private MatOfPoint largestContour;
     private PropPositions previousPropPosition;
-    private PropPositions recordedPropPosition = PropPositions.UNFOUND;
-
+    private PropPositions recordedPropPosition;
 
     /**
      * Uses HSVs for the scalars
@@ -56,27 +55,27 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
      */
     public ColourMassDetectionProcessor(DoubleSupplier minArea, DoubleSupplier left, DoubleSupplier right) {
         this.contours = new ArrayList<>();
-        lower = new Scalar(0, 0, 150);
-        upper = new Scalar(180, 40, 255);
+        lower = new Scalar(0, 0, 200);
+        upper = new Scalar(180, 30, 255);
         this.minArea = minArea;
         this.left = left;
         this.right = right;
 
 //        // setting up the paint for the text in the center of the box
-//        textPaint = new TextPaint();
-//        textPaint.setColor(Color.GREEN); // you may want to change this
-//        textPaint.setTextAlign(Paint.Align.CENTER);
-//        textPaint.setAntiAlias(true);
-//        textPaint.setTextSize(40); // or this
-//        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
-//
-//        // setting up the paint for the lines that comprise the box
-//        linePaint = new Paint();
-//        linePaint.setColor(Color.GREEN); // you may want to change this
-//        linePaint.setAntiAlias(true);
-//        linePaint.setStrokeWidth(10); // or this
-//        linePaint.setStrokeCap(Paint.Cap.ROUND);
-//        linePaint.setStrokeJoin(Paint.Join.ROUND);
+        textPaint = new TextPaint();
+        textPaint.setColor(Color.GREEN); // you may want to change this
+        textPaint.setTextAlign(Paint.Align.CENTER);
+        textPaint.setAntiAlias(true);
+        textPaint.setTextSize(40); // or this
+        textPaint.setTypeface(Typeface.DEFAULT_BOLD);
+
+        // setting up the paint for the lines that comprise the box
+        linePaint = new Paint();
+        linePaint.setColor(Color.GREEN); // you may want to change this
+        linePaint.setAntiAlias(true);
+        linePaint.setStrokeWidth(10); // or this
+        linePaint.setStrokeCap(Paint.Cap.ROUND);
+        linePaint.setStrokeJoin(Paint.Join.ROUND);
     }
 
     @Override
@@ -187,7 +186,7 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
         // and we will hold onto it
 
         // updates the previous prop position to help us check for changes
-        previousPropPosition = propPosition;
+        recordedPropPosition = propPosition;
 
 //		Imgproc.drawContours(frame, contours, -1, colour);
 
@@ -198,38 +197,38 @@ public class ColourMassDetectionProcessor implements VisionProcessor, CameraStre
         return frame;
     }
 
-    @Override
-    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-
-    }
-
 //    @Override
 //    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
-//        // this method draws the rectangle around the largest contour and puts the current prop position into that rectangle
-//        // you don't need to call it
 //
-////		for (MatOfPoint contour : contours) {
-////			Rect rect = Imgproc.boundingRect(contour);
-////			canvas.drawLines(new float[]{rect.x * scaleBmpPxToCanvasPx, rect.y * scaleBmpPxToCanvasPx, (rect.x + rect.width) * scaleBmpPxToCanvasPx, (rect.y + rect.height) * scaleBmpPxToCanvasPx}, textPaint);
-////		}
-//
-//        // if the contour exists, draw a rectangle around it and put its position in the middle of the rectangle
-//        if (largestContour != null) {
-//            Rect rect = Imgproc.boundingRect(largestContour);
-//
-//            float[] points = {rect.x * scaleBmpPxToCanvasPx, rect.y * scaleBmpPxToCanvasPx, (rect.x + rect.width) * scaleBmpPxToCanvasPx, (rect.y + rect.height) * scaleBmpPxToCanvasPx};
-//
-//            canvas.drawLine(points[0], points[1], points[0], points[3], linePaint);
-//            canvas.drawLine(points[0], points[1], points[2], points[1], linePaint);
-//
-//            canvas.drawLine(points[0], points[3], points[2], points[3], linePaint);
-//            canvas.drawLine(points[2], points[1], points[2], points[3], linePaint);
-//
-//            String text = String.format(Locale.ENGLISH, "%s", recordedPropPosition.toString());
-//
-//            canvas.drawText(text, (float) largestContourX * scaleBmpPxToCanvasPx, (float) largestContourY * scaleBmpPxToCanvasPx, textPaint);
-//        }
 //    }
+
+    @Override
+    public void onDrawFrame(Canvas canvas, int onscreenWidth, int onscreenHeight, float scaleBmpPxToCanvasPx, float scaleCanvasDensity, Object userContext) {
+        // this method draws the rectangle around the largest contour and puts the current prop position into that rectangle
+        // you don't need to call it
+
+//		for (MatOfPoint contour : contours) {
+//			Rect rect = Imgproc.boundingRect(contour);
+//			canvas.drawLines(new float[]{rect.x * scaleBmpPxToCanvasPx, rect.y * scaleBmpPxToCanvasPx, (rect.x + rect.width) * scaleBmpPxToCanvasPx, (rect.y + rect.height) * scaleBmpPxToCanvasPx}, textPaint);
+//		}
+
+        // if the contour exists, draw a rectangle around it and put its position in the middle of the rectangle
+        if (largestContour != null) {
+            Rect rect = Imgproc.boundingRect(largestContour);
+
+            float[] points = {rect.x * scaleBmpPxToCanvasPx, rect.y * scaleBmpPxToCanvasPx, (rect.x + rect.width) * scaleBmpPxToCanvasPx, (rect.y + rect.height) * scaleBmpPxToCanvasPx};
+
+            canvas.drawLine(points[0], points[1], points[0], points[3], linePaint);
+            canvas.drawLine(points[0], points[1], points[2], points[1], linePaint);
+
+            canvas.drawLine(points[0], points[3], points[2], points[3], linePaint);
+            canvas.drawLine(points[2], points[1], points[2], points[3], linePaint);
+
+            String text = String.format(Locale.ENGLISH, "%s", recordedPropPosition.toString());
+
+            canvas.drawText(text, (float) largestContourX * scaleBmpPxToCanvasPx, (float) largestContourY * scaleBmpPxToCanvasPx, textPaint);
+        }
+    }
 
     /**
      * @return the last found prop position, if none have been found, returns {@link PropPositions#UNFOUND}

@@ -55,10 +55,10 @@ public class AllMechs {
     public static double wrist_right_down = 0;
     public static double wrist_right_up = 1;
 
-    public static double arm_left_up = .85;
+    public static double arm_left_up = .8;
     public static double arm_left_down = 0.32;
 
-    public static double arm_right_up = 0.15;
+    public static double arm_right_up = 0.2;
     public static double arm_right_down = 0.68;
 
     public static double arm_left_wait = 0.52;
@@ -74,7 +74,7 @@ public class AllMechs {
 
 
     public static double p = 0.02, i = 0, d = 0.00065;
-    public static double f = 0.01;
+    public static double f = 0.04;
 
 
     public static int target = 0;
@@ -314,7 +314,7 @@ public class AllMechs {
 
     public Action intakeDown() {
 
-        return new InstantAction(() -> hold.setPosition(.75));
+        return new InstantAction(() -> hold.setPosition(.7));
 
 
     }
@@ -325,7 +325,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.8);
+            hold.setPosition(.70);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
