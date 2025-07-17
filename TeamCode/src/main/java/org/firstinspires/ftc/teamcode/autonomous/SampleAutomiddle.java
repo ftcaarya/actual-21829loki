@@ -86,7 +86,7 @@ public class SampleAutomiddle extends OpMode {
                                         )
                                 )
 
-                                .splineToLinearHeading(new Pose2d(-58, -63 , Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-62, -62 , Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 new SleepAction(0.6),
@@ -101,18 +101,25 @@ public class SampleAutomiddle extends OpMode {
                                         )
                                 )
                                 .strafeToLinearHeading(new Vector2d(-53, -45), Math.toRadians(90))
-                                .turnTo(Math.toRadians(72))
+                                .turnTo(Math.toRadians(79))
                         .stopAndAdd(
-                                new ParallelAction(
+                                new SequentialAction(
+
+                                        robot.setExtTarget(-200),
+                                        new SleepAction( 0.5),
                                         robot.checkColorRed(),
-                                        new SleepAction(1),
-                                        robot.setExtTarget(-210)
+                                        new SleepAction(0.5),
+                                        robot.setExtTarget(-250)
+
+
+
+
+
 
 
 
                                 )
                         )
-                                .splineToConstantHeading(new Vector2d(-52, -43), Math.toRadians(72))
 
                                 .stopAndAdd(
                                         new SequentialAction(
@@ -134,7 +141,7 @@ public class SampleAutomiddle extends OpMode {
                                         robot.setExtTarget(100)
                                 )
                         )
-                                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-61, -61    , Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.armDown(),
@@ -157,16 +164,22 @@ public class SampleAutomiddle extends OpMode {
                                 )
                                 // add the deposit action for the sample it holds
                                 .setTangent(0)
-                                .splineToLinearHeading(new Pose2d(-58, -44, Math.toRadians(95)), -Math.toRadians(180))
+                                .splineToLinearHeading(new Pose2d(-62, -44, Math.toRadians(95)), -Math.toRadians(180))
                                 // add the intake for the middle sample
                                 .stopAndAdd(
-                                        new ParallelAction(
+                                        new SequentialAction(
+                                                new SleepAction(0.5),
+                                                robot.setExtTarget(-100),
+                                                new SleepAction( 0.5),
                                                 robot.checkColorRed(),
                                                 new SleepAction(1),
-                                                robot.setExtTarget(-120)
+                                                robot.setExtTarget(-150)
+
+
+
                                         )
                                 )
-                                .splineToConstantHeading(new Vector2d(-58, -44), Math.toRadians(95))
+                                .splineToConstantHeading(new Vector2d(-55, -44), Math.toRadians(95))
                                 .stopAndAdd(
                                         new SequentialAction(
 
@@ -208,6 +221,14 @@ public class SampleAutomiddle extends OpMode {
                                 .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
                                 .setTangent(Math.toRadians(90))
                                 .splineToLinearHeading(new Pose2d(-28, -9, Math.toRadians(0)), Math.toRadians(0))
+                                .stopAndAdd(
+                                        new ParallelAction(
+                                                robot.setExtTarget(-400),
+                                                robot.intakeUp()
+
+                                        )
+
+                                )
                                 // add the intake from the submersible
                                 .setReversed(true)
                                 .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))

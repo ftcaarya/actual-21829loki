@@ -73,7 +73,7 @@ public class AllMechs {
     public static double intake_down = .8;
 
 
-    public static double p = 0.02, i = 0, d = 0.00065;
+    public static double p = 0.015, i = 0, d = 0.00065;
     public static double f = 0.04;
 
 
@@ -82,7 +82,9 @@ public class AllMechs {
 
     public static double pe = 0.04, ie = 0, de = 0.0007;
 
+    public static double pes = 0.04, ies = 0, des = 0.0007;
     public static int hor_target = 0;
+    public static int extTargetSlow = 0;
 
     public DcMotorEx extension;
 
@@ -278,8 +280,35 @@ public class AllMechs {
             return true;
         };
     }
+
     public Action setExtTarget(int extarget) {
         return new InstantAction(() -> extTarget = extarget);
+    }
+    public Action setExtTargetSlow(int extarget) {
+        return new InstantAction(() -> extTargetSlow = extarget);
+    }
+    public Action CheckSample(){
+        return p -> {
+            if (!((colorSensor.green() > colorSensor.blue()) && (colorSensor.red() > colorSensor.blue())) && (extension.getCurrentPosition() > -50)) {
+                new SequentialAction(
+                        new SleepAction(1),
+                        setExtTarget(-250)
+
+
+                );
+                return false;
+
+            } else if (!(colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) && (extension.getCurrentPosition() > -50)) {
+                new SequentialAction(
+                        new SleepAction(1),
+                        setExtTarget(-250)
+
+
+                );
+                return false;
+            }
+            return true;
+        };
     }
 
     public Action intakeIn(){
@@ -325,6 +354,44 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
+            hold.setPosition(.65);
+
+            if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
+                pooper.setPosition(POOPER_BLOCK);
+                gamepad1.rumbleBlips(1);
+                gamepad1.setLedColor(255, 0, 0, 5000);
+                intake.setPower(0);
+                hold.setPosition(.3);
+                setHorTarget(20);
+                return false;
+            } else if ((colorSensor.green() > colorSensor.blue()) && (colorSensor.red() > colorSensor.blue())) {
+                pooper.setPosition(POOPER_BLOCK);
+                gamepad1.setLedColor(230, 230, 0, 5000);
+                gamepad1.rumbleBlips(1);
+                intake.setPower(0);
+                hold.setPosition(.3);
+                setHorTarget(20);
+                return false;
+            } else if (colorSensor.blue() > colorSensor.green() + 50 && colorSensor.blue() > colorSensor.red() + 50) {
+                pooper.setPosition(POOPER_PASS);
+                gamepad1.setLedColor(0, 0, 225, 5000);
+                gamepad1.rumbleBlips(1);
+                intake.setPower(-.65);
+                return true;
+            } else if (gamepad1.square) {
+                pooper.setPosition(POOPER_BLOCK);
+                hold.setPosition(.3);
+                intake.setPower(0);
+                return false;
+            } else {
+                pooper.setPosition(POOPER_BLOCK);
+                intake.setPower(-.55);
+                return true;
+            }
+        };
+    }
+    public Action checkColorRedAuto() {
+        return p -> {
             hold.setPosition(.70);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
@@ -347,13 +414,8 @@ public class AllMechs {
                 pooper.setPosition(POOPER_PASS);
                 gamepad1.setLedColor(0, 0, 225, 5000);
                 gamepad1.rumbleBlips(1);
-                intake.setPower(-.7);
+                intake.setPower(-.65);
                 return true;
-            } else if (gamepad1.square) {
-                pooper.setPosition(POOPER_BLOCK);
-                hold.setPosition(.3);
-                intake.setPower(0);
-                return false;
             } else {
                 pooper.setPosition(POOPER_BLOCK);
                 intake.setPower(-.65);
