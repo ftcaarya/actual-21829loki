@@ -50,7 +50,7 @@ public class SampleAuto extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacleSample(700, 100, 330, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleSample(700, 100, 360, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 

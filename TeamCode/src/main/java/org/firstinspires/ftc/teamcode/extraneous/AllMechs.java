@@ -53,12 +53,17 @@ public class AllMechs {
     public static double wrist_left_up = 0;
 
     public static double wrist_right_down = 0;
+    public static double wrist_right_spec = 0.45;
+
     public static double wrist_right_up = 1;
 
     public static double arm_left_up = .85;
+    public static double arm_left_spec = 0.95;
+
     public static double arm_left_down = 0.32;
 
     public static double arm_right_up = 0.15;
+    public static double arm_right_spec = 0.05;
     public static double arm_right_down = 0.68;
 
     public static double arm_left_wait = 0.52;
@@ -357,7 +362,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.65);
+            hold.setPosition(.81);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);

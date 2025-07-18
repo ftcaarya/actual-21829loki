@@ -130,7 +130,7 @@ public class SampleAutoleft extends OpMode {
                                                 robot.armWait(),
                                                 robot.wristDown(),
                                                 robot.setVertTarget(0),
-                                                new InstantAction(()-> robot.hold.setPosition(0.7))
+                                                new InstantAction(()-> robot.hold.setPosition(0.75))
 
                                         )
                                 )
@@ -177,7 +177,7 @@ public class SampleAutoleft extends OpMode {
                                                 robot.armWait(),
                                                 robot.wristDown(),
                                                 robot.setVertTarget(0),
-                                                new InstantAction(()-> robot.hold.setPosition(0.7))
+                                                new InstantAction(()-> robot.hold.setPosition(0.75))
                                         )
 
                                 )

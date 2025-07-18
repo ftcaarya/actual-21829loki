@@ -145,7 +145,7 @@ public class DetermineBarnacleSample {
                 .turnTo(Math.toRadians(79))
                 .stopAndAdd(
                         new SequentialAction(
-                                robot.setExtTarget(-250),
+                                robot.setExtTarget(-230),
                                 new SleepAction(1),
                                 robot.checkColorRed())
 
@@ -167,7 +167,7 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(100)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), Math.PI/2)
+                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), Math.PI/2)
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
@@ -242,82 +242,235 @@ public class DetermineBarnacleSample {
                 .setTangent(Math.toRadians(60))
 //                                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
 //                                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-28, -9, Math.toRadians(0)), Math.toRadians(0))
-                .stopAndAdd(
-                        new SequentialAction(
-                                new ParallelAction(
-                                        robot.setExtTarget(-180),
-                                        robot.intakeUp()
-                                ),
-                                new SleepAction(.5),
-                                robot.subIntakeCheck(),
-                                robot.setExtTarget(100)
-                        )
 
-
-                )
-                // add the intake from the submersible
-                .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180))
-                // deposit the sample that it has.
+                .splineToLinearHeading(new Pose2d(-54, -52, Math.toRadians(45)), Math.toRadians(180))
 
                 .build();
     }
 
     private static void generateMiddleTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .turnTo(Math.toRadians(65))
+                .turnTo(Math.toRadians(76))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.setExtTarget(-230),
+                                new SleepAction(1),
+                                robot.checkColorRed())
+
+                )
+
+                .stopAndAdd(
+                        new SequentialAction(
+
+                                robot.intakeIn(),
+                                new SleepAction(0.3),
+                                robot.stopIntake()
+                        )
+                )
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), -Math.PI)
-                // add the deposit action for the sample it holds
-                .setTangent(0)
-                .splineToLinearHeading(new Pose2d(-56, -44, Math.toRadians(95)), -Math.toRadians(180))
-                // add the intake for the middle sample
-                .setTangent(0)
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), -Math.PI)
-                // add the deposit action for the sample it holds
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
-                .setTangent(Math.toRadians(90))
-                .splineToLinearHeading(new Pose2d(-28, -9, Math.toRadians(0)), Math.toRadians(0))
-                // add the intake from the submersible
-                .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
-                .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180))
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(120)
+                        )
+                )
+                .splineToLinearHeading(new Pose2d(-58.5, -58.5, Math.toRadians(45)), -Math.PI)
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(1.5),
+                                robot.clawOpen(),
+                                new SleepAction(.7),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0),
+                                new InstantAction(()-> robot.hold.setPosition(0.75))
+                        )
+
+                )
+                .setTangent((Math.PI - Math.atan((18/14.5))))
+                .splineToLinearHeading(new Pose2d(-53, -38, Math.toRadians(136)), (Math.PI - Math.atan((18/14.5))))
+                .stopAndAdd(
+                        new SequentialAction(
+                                new SleepAction(.5),
+                                robot.setExtTarget(-350),
+                                new SleepAction(1),
+                                robot.checkColorRed()
+
+                        )
+                )
+//                                .splineToConstantHeading(new Vector2d(-55, -44), Math.toRadians(95))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeIn(),
+                                new SleepAction(0.5),
+                                robot.stopIntake()
+
+                        )
+                )
+//                                .setTangent(0)
+
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(100)
+                        )
+                )
+                .setTangent(Math.toRadians(180 + 120))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                // deposit the sample that is with the robot
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new SleepAction(0.5),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(2),
+                                robot.clawOpen(),
+                                new SleepAction(.5),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0)
+                        )
+                )
+//                                        .setTangent(Math.toRadians(0))
+//                                        .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
+//                                        .setTangent(Math.toRadians(90))
+//                                        .splineToLinearHeading(new Pose2d(-28, -9, Math.toRadians(0)), Math.toRadians(0))
+//                                        // add the intake from the submersible
+//                                        .setReversed(true)
+//                                        .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
+//                                        .setTangent(Math.toRadians(-90))
+                .splineToLinearHeading(new Pose2d(-40, -55, Math.toRadians(45)), Math.toRadians(180))
                 // deposit the sample that it has.
                 .build();
     }
 
     private static void generateRightTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .turnTo(Math.toRadians(100))
+                .turnTo(Math.toRadians(105.5))
                 // intake sample
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.setExtTarget(-260),
+                                new SleepAction(1),
+                                robot.checkColorRed())
+
+                )
+                .stopAndAdd(
+                        new SequentialAction(
+
+                                robot.intakeIn(),
+                                new SleepAction(0.3),
+                                robot.stopIntake()
+                        )
+                )
                 .setTangent(Math.toRadians(180 + 120))
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180 + 120))
-                // deposit the sample that is with the robot
+
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(100)
+                        )
+                )
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(1.5),
+                                robot.clawOpen(),
+                                new SleepAction(1),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0),
+                                new InstantAction(()-> robot.hold.setPosition(0.75))
+                        )
+
+                )
                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                .splineToLinearHeading(new Pose2d(-54, -44, (Math.PI - Math.atan((18/14.5)))), (Math.PI - Math.atan((18/14.5))))
-                // intake sample
+                .splineToLinearHeading(new Pose2d(-53, -38, Math.toRadians(136)), (Math.PI - Math.atan((18/14.5))))
+                .stopAndAdd(
+                        new SequentialAction(
+                                new SleepAction(.5),
+                                robot.setExtTarget(-350),
+                                new SleepAction(1),
+                                robot.checkColorRed()
+
+                        )
+                )
+//                                .splineToConstantHeading(new Vector2d(-55, -44), Math.toRadians(95))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeIn(),
+                                new SleepAction(0.5),
+                                robot.stopIntake()
+
+                        )
+                )
+//                                .setTangent(0)
+
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(100)
+                        )
+                )
                 .setTangent(Math.toRadians(180 + 120))
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180 + 120))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
                 // deposit the sample that is with the robot
-                .setTangent(Math.toRadians(180))
-                .splineToSplineHeading(new Pose2d(-59, -50, Math.toRadians(90)), Math.toRadians(180))
-                .setTangent(Math.toRadians(90))
-                .splineToConstantHeading(new Vector2d(-47, -6), Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(-30, -9, Math.toRadians(0)), Math.toRadians(0))
-                // intake sample from the sub
-                .setTangent(Math.toRadians(180))
-                .splineToLinearHeading(new Pose2d(-47, -6, Math.toRadians(90)), Math.toRadians(180))
-                .setTangent(Math.toRadians(180))
-                .splineToConstantHeading(new Vector2d(-59, -50), Math.toRadians(270))
-                .setTangent(0)
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(270))
-                // deposit the sample that is with the robot
-                .setTangent(Math.toRadians(0))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new SleepAction(0.5),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(2),
+                                robot.clawOpen(),
+                                new SleepAction(.5),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0)
+                        )
+
+                )
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToSplineHeading(new Pose2d(-59, -50, Math.toRadians(90)), Math.toRadians(180))
+//                                .setTangent(Math.toRadians(90))
+//                                .splineToConstantHeading(new Vector2d(-47, -6), Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(-30, -9, Math.toRadians(0)), Math.toRadians(0))
+//                                // intake sample from the sub
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(-47, -6, Math.toRadians(90)), Math.toRadians(180))
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToConstantHeading(new Vector2d(-59, -50), Math.toRadians(270))
+//                                .setTangent(0)
+//                                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(270))
+//                                // deposit the sample that is with the robot
+//                                .setTangent(Math.toRadians(0))
                 .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0))
                 .build();
     }

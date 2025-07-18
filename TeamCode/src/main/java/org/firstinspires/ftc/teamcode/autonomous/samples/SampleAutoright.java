@@ -102,16 +102,16 @@ public class SampleAutoright extends OpMode {
                                                         robot.armWait(),
                                                         robot.wristDown(),
                                                         robot.setVertTarget(0),
-                                                        new InstantAction(()-> robot.hold.setPosition(0.7))
+                                                        new InstantAction(()-> robot.hold.setPosition(0.75))
 
                                                 )
                                         )
                                         .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
-                                .turnTo(Math.toRadians(108))
+                                .turnTo(Math.toRadians(105.5))
                                 // intake sample
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                robot.setExtTarget(-210),
+                                                robot.setExtTarget(-260),
                                                 new SleepAction(1),
                                                 robot.checkColorRed())
 
@@ -149,12 +149,12 @@ public class SampleAutoright extends OpMode {
                                                 robot.armWait(),
                                                 robot.wristDown(),
                                                 robot.setVertTarget(0),
-                                                new InstantAction(()-> robot.hold.setPosition(0.7))
+                                                new InstantAction(()-> robot.hold.setPosition(0.75))
                                         )
 
                                 )
                                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                                .splineToLinearHeading(new Pose2d(-52, -36, Math.toRadians(138)), (Math.PI - Math.atan((18/14.5))))
+                                .splineToLinearHeading(new Pose2d(-53, -38, Math.toRadians(136)), (Math.PI - Math.atan((18/14.5))))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 new SleepAction(.5),
