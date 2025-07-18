@@ -102,7 +102,7 @@ public class SampleAutoright extends OpMode {
                                                         robot.armWait(),
                                                         robot.wristDown(),
                                                         robot.setVertTarget(0),
-                                                        new InstantAction(()-> robot.hold.setPosition(0.8))
+                                                        new InstantAction(()-> robot.hold.setPosition(0.7))
 
                                                 )
                                         )
@@ -111,7 +111,7 @@ public class SampleAutoright extends OpMode {
                                 // intake sample
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                robot.setExtTarget(-200),
+                                                robot.setExtTarget(-210),
                                                 new SleepAction(1),
                                                 robot.checkColorRed())
 
@@ -143,22 +143,22 @@ public class SampleAutoright extends OpMode {
                                                         robot.armUp(),
                                                         robot.wristUp()
                                                 ),
-                                                new SleepAction(1),
+                                                new SleepAction(1.5),
                                                 robot.clawOpen(),
-                                                new SleepAction(.7),
+                                                new SleepAction(1),
                                                 robot.armWait(),
                                                 robot.wristDown(),
                                                 robot.setVertTarget(0),
-                                                new InstantAction(()-> robot.hold.setPosition(0.75))
+                                                new InstantAction(()-> robot.hold.setPosition(0.7))
                                         )
 
                                 )
                                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                                .splineToLinearHeading(new Pose2d(-52, -40, Math.toRadians(145)), (Math.PI - Math.atan((18/14.5))))
+                                .splineToLinearHeading(new Pose2d(-52, -36, Math.toRadians(138)), (Math.PI - Math.atan((18/14.5))))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 new SleepAction(.5),
-                                                robot.setExtTarget(-250),
+                                                robot.setExtTarget(-350),
                                                 new SleepAction(1),
                                                 robot.checkColorRed()
 
