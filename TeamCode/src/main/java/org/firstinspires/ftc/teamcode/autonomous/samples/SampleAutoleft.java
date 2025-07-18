@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.autonomous.samples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -17,12 +17,12 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
-import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSample;
 
 @Autonomous(name = "Sample Side Auto left", group = "robot")
 public class SampleAutoleft extends OpMode {
     ActionSchedular actionSchedular;
-    DetermineBarnacle determineBarnacle;
+    DetermineBarnacleSample determineBarnacle;
     PinpointDrive drive;
 //    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
     Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
@@ -43,7 +43,7 @@ public class SampleAutoleft extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleSample(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -89,15 +89,10 @@ public class SampleAutoleft extends OpMode {
 
                                 )
                                 .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                determineBarnacle.detectTarget(),
-                                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-//                                    actionSchedular.run();
-                                                DetermineBarnacle.getTargetSampleTrajectory()
 
-                                        )
-                                ).build()),
+
+                                .build()
+                        ),
                         robot.updateExtPID(),
                         robot.updateVertPID()
                 )
@@ -107,42 +102,6 @@ public class SampleAutoleft extends OpMode {
     @Override
     public void loop() {
 
-    }
-
-
-
-    private TrajectoryActionBuilder wholeSequence() {
-         TrajectoryActionBuilder builder = drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                .setReversed(false)
-                .splineToLinearHeading(new Pose2d(-52, -52 , Math.toRadians(45)), -Math.PI)
-                .stopAndAdd(
-                        new SequentialAction(
-                                new ParallelAction(
-                                        robot.clawClose(),
-                                        robot.armUp(),
-                                        robot.setVertTarget(2790)
-                                ),
-                                new SleepAction(2),
-                                robot.clawOpen(),
-                                robot.armWait(),
-                                robot.setVertTarget(0)
-                        )
-
-
-                )
-                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-//                 Add the Anonymous Action for the Vision.
-                .stopAndAdd(
-                        new SequentialAction(
-                                determineBarnacle.detectTarget(),
-                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-//                                    actionSchedular.run();
-                                    DetermineBarnacle.getTargetSampleTrajectory()
-
-                        )
-                );
-
-        return builder;
     }
 
 

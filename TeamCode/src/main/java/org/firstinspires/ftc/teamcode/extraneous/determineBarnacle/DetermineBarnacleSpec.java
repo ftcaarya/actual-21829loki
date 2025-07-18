@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.extraneous;
+package org.firstinspires.ftc.teamcode.extraneous.determineBarnacle;
 
 import static org.firstinspires.ftc.vision.VisionPortal.CameraState.STREAMING;
 
@@ -14,17 +14,18 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
+import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-public class DetermineBarnacle {
+public class DetermineBarnacleSpec {
     public VisionPortal visionPortal;
     public ColourMassDetectionProcessor colourMassDetectionProcessor;
+
     static PinpointDrive drive;
     static AllMechs robot;
-    private HardwareMap hardwareMap; // Remove static and use instance variable
+    private HardwareMap hardwareMap;
 
     static ColourMassDetectionProcessor.PropPositions recordedBarnaclePosition;
     private static Action targetSampleTrajectory;
@@ -33,9 +34,10 @@ public class DetermineBarnacle {
     private double minArea;
     private int left, right;
 
-    public DetermineBarnacle(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
+
+    public DetermineBarnacleSpec(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
         pose = poseGiven;
-        this.hardwareMap = hardwareMap; // Store as instance variable
+        this.hardwareMap = hardwareMap;
         this.minArea = minArea;
         this.left = left;
         this.right = right;
@@ -61,14 +63,6 @@ public class DetermineBarnacle {
     public Action detectTarget() {
         return new InstantAction(() -> {
             try {
-                // Create VisionPortal
-//                visionPortal = new VisionPortal.Builder()
-//                        .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-//                        .addProcessor(colourMassDetectionProcessor)
-//                        .build();
-//
-//                FtcDashboard.getInstance().startCameraStream(visionPortal, 60);
-
                 // Actually wait for camera to be ready and process frames
                 int attempts = 0;
                 while (visionPortal.getCameraState() != STREAMING && attempts < 100) {
@@ -81,12 +75,6 @@ public class DetermineBarnacle {
                     }
                 }
 
-                // Give it extra time to process frames
-//                try {
-//                    Thread.sleep(2000); // Wait 2 seconds for processing
-//                } catch (InterruptedException e) {
-//                    Thread.currentThread().interrupt();
-//                }
 
                 // Get the detection result
                 if (colourMassDetectionProcessor != null && visionPortal != null) {
@@ -335,7 +323,6 @@ public class DetermineBarnacle {
                 .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0))
                 .build();
     }
-
 
 
     /**
