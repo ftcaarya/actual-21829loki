@@ -32,6 +32,8 @@ import org.firstinspires.ftc.vision.VisionPortal;
 import org.openftc.easyopencv.OpenCvCamera;
 import org.openftc.easyopencv.OpenCvCameraFactory;
 
+import java.util.LinkedList;
+
 public class AllMechs {
     public PIDController controller_right;
 
@@ -50,10 +52,13 @@ public class AllMechs {
     public static final double CLAW_CLOSE = 0.05;
 
     public static double wrist_left_down = 1;
+
+    public static double wrist_left_spec = 0.57;
+
     public static double wrist_left_up = 0;
 
     public static double wrist_right_down = 0;
-    public static double wrist_right_spec = 0.45;
+    public static double wrist_right_spec = 0.7;
 
     public static double wrist_right_up = 1;
 
@@ -70,22 +75,26 @@ public class AllMechs {
 
     public static double arm_right_wait = 0.48;
 
+    public static double arm_left_get = 0.42;
+
+    public static double arm_right_get = 0.58;
+
 
     public static final double rotate_hor = 0.22;
-    public static final double rotate_vert = 0.55;
+    public static final double rotate_opp_hor = 0.82;
 
     public static double intake_up = .3;
     public static double intake_down = .8;
 
 
     public static double p = 0.015, i = 0, d = 0.00065;
-    public static double f = 0.04;
+    public static double f = 0.06;
 
 
     public static int target = 0;
     public final double ticks_in_degree = 700/180.0;
 
-    public static double pe = 0.04, ie = 0, de = 0.0007;
+    public static double pe = 0.03, ie = 0, de = 0.0007;
 
     public static double pes = 0.04, ies = 0, des = 0.0007;
     public static int hor_target = 0;
@@ -362,7 +371,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.81);
+            hold.setPosition(.79);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
@@ -490,14 +499,35 @@ public class AllMechs {
         return new InstantAction(() -> rotate.setPosition(rotate_hor));
 
     }
-    public Action rotateVert() {
-        return new InstantAction(() -> rotate.setPosition(rotate_vert));
+    public Action rotateoppHor() {
+        return new InstantAction(() -> rotate.setPosition(rotate_opp_hor));
 
     }
     public Action armWait(){
         return new ParallelAction(
                 new InstantAction(()-> arm_right.setPosition(arm_right_wait)),
                 new InstantAction(()-> arm_left.setPosition(arm_left_wait))
+        );
+    }
+    public Action putSpec(){
+        return new ParallelAction(
+                new InstantAction(()-> arm_right.setPosition(arm_right_spec)),
+                new InstantAction(()-> arm_left.setPosition(arm_left_spec)),
+                new InstantAction(()-> wrist_left.setPosition(wrist_left_up)),
+                clawClose(),
+                rotateoppHor(),
+                setVertTarget(-300)
+
+
+
+        );
+    }
+    public Action getSpec(){
+        return new ParallelAction(
+                new InstantAction(()-> arm_right.setPosition(arm_right_get)),
+                new InstantAction(()-> arm_left.setPosition(arm_left_get)),
+                new InstantAction(()-> wrist_left.setPosition(wrist_left_spec))
+
         );
     }
 

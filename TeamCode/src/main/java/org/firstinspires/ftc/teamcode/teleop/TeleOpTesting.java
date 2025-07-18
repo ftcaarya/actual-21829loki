@@ -91,26 +91,25 @@ public class TeleOpTesting extends OpMode {
 //                    )
 //            );
 //        }
-        if (gamepad1.dpad_up) {
+        if (gamepad2.dpad_up) {
             runningActions.add(
                     robot.transfer()
                     );
         }
 
-        if (gamepad1.dpad_down) {
+        if (gamepad2.dpad_down) {
             runningActions.add(
                     new ParallelAction(
                             robot.setVertTarget(0),
-
                             robot.armWait(),
-
-                            robot.wristDown()
+                            robot.wristDown(),
+                            robot.rotateHor()
                     )
             );
         }
 
 
-        if (gamepad1.dpad_right) {
+        if (gamepad2.dpad_right) {
             runningActions.add(
 
                     robot.setExtTarget(-400)
@@ -118,32 +117,41 @@ public class TeleOpTesting extends OpMode {
             horToggle = true;
         }
 
-        if (gamepad1.dpad_left && !horToggle) {
+        if (gamepad2.dpad_left && !horToggle) {
             runningActions.add(
-                    robot.setExtTarget(-20)
+                    new ParallelAction(
+                            robot.setExtTarget(-20),
+                            robot.intakeUp(),
+                            robot.stopIntake()
+                    )
+
             );
         }
 
-        if (gamepad1.dpad_left && horToggle) {
+        if (gamepad2.dpad_left && horToggle) {
 
             runningActions.add(
-                    robot.setExtTarget(100)
+                    new ParallelAction(
+                    robot.setExtTarget(100),
+                    robot.intakeUp(),
+                    robot.stopIntake()
+                    )
             );
         }
-        if (gamepad1.left_bumper) {
+        if (gamepad2.left_bumper) {
             runningActions.add(
 
                     robot.clawOpen()
             );
         }
-        if (gamepad1.right_bumper) {
+        if (gamepad2.right_bumper) {
             runningActions.add(
                     robot.clawClose()
             );
         }
 
 
-        if (gamepad1.right_stick_button) {
+        if (gamepad2.right_stick_button) {
             runningActions.add(new ParallelAction(
                     robot.intakeDown(),
                     robot.checkColorRed(),
@@ -153,7 +161,7 @@ public class TeleOpTesting extends OpMode {
         }
 
 
-        if (gamepad1.circle) {
+        if (gamepad2.circle) {
             runningActions.add(
 
                     new ParallelAction(
@@ -163,20 +171,32 @@ public class TeleOpTesting extends OpMode {
             );
         }
 
-        if (gamepad1.left_stick_button) {
+        if (gamepad2.left_stick_button) {
             runningActions.add(
                     robot.armDown()
             );
         }
-        if(gamepad1.cross) {
+        if(gamepad2.cross) {
             runningActions.add(
                     robot.intakeIn()
             );
         }
-        if(gamepad1.triangle){
+        if(gamepad2.triangle){
             runningActions.add(
                     robot.intakeBack()
             );
+        }
+        if (gamepad2.left_trigger>0.2){
+            runningActions.add(
+                    robot.getSpec()
+            );
+
+        }
+        if (gamepad2.right_trigger>0.2){
+            runningActions.add(
+                    robot.putSpec()
+            );
+
         }
 //
 

@@ -141,11 +141,12 @@ public class DetermineBarnacleSample {
 
     private static void generateLeftTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-//                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
-                .turnTo(Math.toRadians(79))
+//
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(76))
                 .stopAndAdd(
                         new SequentialAction(
-                                robot.setExtTarget(-230),
+                                new InstantAction(()-> robot.hold.setPosition(0.75)),
+                                robot.setExtTarget(-210),
                                 new SleepAction(1),
                                 robot.checkColorRed())
 
@@ -188,14 +189,23 @@ public class DetermineBarnacleSample {
                         )
 
                 )
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeBack(),
+                                new SleepAction(1),
+                                robot.stopIntake()
+
+
+                        )
+                )
                 .setTangent(Math.toRadians(90))
                 // add the deposit action for the sample it holds
-                .splineToLinearHeading(new Pose2d(-59, -40, Math.toRadians(90)), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-58.5, -40), Math.toRadians(90))
                 // add the intake for the middle sample
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
-                                robot.setExtTarget(-150),
+                                robot.setExtTarget(-160),
                                 new SleepAction(1),
                                 robot.checkColorRed()
 
@@ -250,10 +260,11 @@ public class DetermineBarnacleSample {
 
     private static void generateMiddleTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .turnTo(Math.toRadians(76))
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(74))
                 .stopAndAdd(
                         new SequentialAction(
-                                robot.setExtTarget(-230),
+                                robot.stopIntake(),
+                                robot.setExtTarget(-210),
                                 new SleepAction(1),
                                 robot.checkColorRed())
 
@@ -263,7 +274,7 @@ public class DetermineBarnacleSample {
                         new SequentialAction(
 
                                 robot.intakeIn(),
-                                new SleepAction(0.3),
+                                new SleepAction(0.7),
                                 robot.stopIntake()
                         )
                 )
@@ -295,12 +306,21 @@ public class DetermineBarnacleSample {
                         )
 
                 )
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeBack(),
+                                new SleepAction(1),
+                                robot.stopIntake()
+
+
+                        )
+                )
                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                .splineToLinearHeading(new Pose2d(-53, -38, Math.toRadians(136)), (Math.PI - Math.atan((18/14.5))))
+                .splineToLinearHeading(new Pose2d(-53.5, -39, Math.toRadians(133)), (Math.PI - Math.atan((18/14.5))))
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
-                                robot.setExtTarget(-350),
+                                robot.setExtTarget(-310),
                                 new SleepAction(1),
                                 robot.checkColorRed()
 
@@ -360,10 +380,10 @@ public class DetermineBarnacleSample {
 
     private static void generateRightTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .turnTo(Math.toRadians(105.5))
-                // intake sample
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(107))                // intake sample
                 .stopAndAdd(
                         new SequentialAction(
+                                robot.stopIntake(),
                                 robot.setExtTarget(-260),
                                 new SleepAction(1),
                                 robot.checkColorRed())
@@ -406,8 +426,17 @@ public class DetermineBarnacleSample {
                         )
 
                 )
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeBack(),
+                                new SleepAction(1),
+                                robot.stopIntake()
+
+
+                        )
+                )
                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                .splineToLinearHeading(new Pose2d(-53, -38, Math.toRadians(136)), (Math.PI - Math.atan((18/14.5))))
+                .splineToLinearHeading(new Pose2d(-53, -39, Math.toRadians(134)), (Math.PI - Math.atan((18/14.5))))
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),

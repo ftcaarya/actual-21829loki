@@ -45,7 +45,7 @@ public class SampleAuto extends OpMode {
         Pose2d initialPose = new Pose2d(-35, -63, Math.toRadians(90));
         drive = new PinpointDrive(hardwareMap, new Pose2d(-35, -63, Math.toRadians(90)));
 
-        Pose2d passPose = new Pose2d(-52, -43, Math.toRadians(90));
+        Pose2d passPose = new Pose2d(-50, -43, Math.toRadians(90));
 
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
@@ -74,7 +74,8 @@ public class SampleAuto extends OpMode {
                                 .stopAndAdd( new ParallelAction(
                                                 new InstantAction(() -> robot.hold.setPosition(.3) ),
                                                 robot.rotateHor(),
-                                                robot.clawClose()
+                                                robot.clawClose(),
+                                        robot.setExtTarget(100)
                                         )
 
 
@@ -105,7 +106,7 @@ public class SampleAuto extends OpMode {
 
                                         )
                                 )
-                                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
+                                .strafeToLinearHeading(new Vector2d(-50, -43), Math.toRadians(90))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),
