@@ -5,7 +5,10 @@ import static org.firstinspires.ftc.vision.VisionPortal.CameraState.STREAMING;
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.roadrunner.Action;
 import com.acmerobotics.roadrunner.InstantAction;
+import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
+import com.acmerobotics.roadrunner.SequentialAction;
+import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -30,14 +33,14 @@ public class DetermineBarnacle {
     private double minArea;
     private int left, right;
 
-    public DetermineBarnacle(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive) {
+    public DetermineBarnacle(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
         pose = poseGiven;
         this.hardwareMap = hardwareMap; // Store as instance variable
         this.minArea = minArea;
         this.left = left;
         this.right = right;
 
-        robot = new AllMechs(hardwareMap, left, right, gamepad1, gamepad2);
+        this.robot = robot;
 
         colourMassDetectionProcessor = new ColourMassDetectionProcessor(
                 () -> this.minArea,
@@ -46,18 +49,25 @@ public class DetermineBarnacle {
         );
 
         this.drive = drive;
+
+        visionPortal = new VisionPortal.Builder()
+                .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+                .addProcessor(colourMassDetectionProcessor)
+                .build();
+
+        FtcDashboard.getInstance().startCameraStream(visionPortal, 60);
     }
 
     public Action detectTarget() {
         return new InstantAction(() -> {
             try {
                 // Create VisionPortal
-                visionPortal = new VisionPortal.Builder()
-                        .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
-                        .addProcessor(colourMassDetectionProcessor)
-                        .build();
-
-                FtcDashboard.getInstance().startCameraStream(visionPortal, 60);
+//                visionPortal = new VisionPortal.Builder()
+//                        .setCamera(hardwareMap.get(WebcamName.class, "Webcam 1"))
+//                        .addProcessor(colourMassDetectionProcessor)
+//                        .build();
+//
+//                FtcDashboard.getInstance().startCameraStream(visionPortal, 60);
 
                 // Actually wait for camera to be ready and process frames
                 int attempts = 0;
@@ -72,11 +82,11 @@ public class DetermineBarnacle {
                 }
 
                 // Give it extra time to process frames
-                try {
-                    Thread.sleep(2000); // Wait 2 seconds for processing
-                } catch (InterruptedException e) {
-                    Thread.currentThread().interrupt();
-                }
+//                try {
+//                    Thread.sleep(2000); // Wait 2 seconds for processing
+//                } catch (InterruptedException e) {
+//                    Thread.currentThread().interrupt();
+//                }
 
                 // Get the detection result
                 if (colourMassDetectionProcessor != null && visionPortal != null) {
@@ -145,27 +155,128 @@ public class DetermineBarnacle {
 
     private static void generateLeftTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .turnTo(Math.toRadians(65))
-                // intake the sample
-                .setTangent(180 + 65)
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), -Math.PI)
-                // deposit the sample that is with the robot
+//                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
+                .turnTo(Math.toRadians(79))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.setExtTarget(-250),
+                                new SleepAction(1),
+                                robot.checkColorRed())
+
+                )
+
+                .stopAndAdd(
+                        new SequentialAction(
+
+                                robot.intakeIn(),
+                                new SleepAction(0.3),
+                                robot.stopIntake()
+                        )
+                )
                 .setTangent(0)
-                .splineToLinearHeading(new Pose2d(-56, -44, Math.toRadians(130)), -Math.toRadians(180))
-                // intake the sample
-                .setReversed(true)
-                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(-90))
-                // deposit the sample that is with the robot
-                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(90)), Math.toRadians(90))
+
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(100)
+                        )
+                )
+                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), Math.PI/2)
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(1),
+                                robot.clawOpen(),
+                                new SleepAction(.7),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0),
+                                new InstantAction(()-> robot.hold.setPosition(0.75))
+                        )
+
+                )
                 .setTangent(Math.toRadians(90))
+                // add the deposit action for the sample it holds
+                .splineToLinearHeading(new Pose2d(-59, -40, Math.toRadians(90)), Math.toRadians(90))
+                // add the intake for the middle sample
+                .stopAndAdd(
+                        new SequentialAction(
+                                new SleepAction(.5),
+                                robot.setExtTarget(-150),
+                                new SleepAction(1),
+                                robot.checkColorRed()
+
+                        )
+                )
+//                                .splineToConstantHeading(new Vector2d(-55, -44), Math.toRadians(95))
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.intakeIn(),
+                                new SleepAction(0.5),
+                                robot.stopIntake()
+
+                        )
+                )
+//                                .setTangent(0)
+
+                .stopAndAdd(
+                        new ParallelAction(
+                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                robot.setExtTarget(100)
+                        )
+                )
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), -Math.PI)
+                .stopAndAdd(
+                        new SequentialAction(
+                                robot.armDown(),
+                                robot.clawClose(),
+                                new SleepAction(.5),
+                                robot.setVertTarget(-2700),
+                                new SleepAction(0.5),
+                                new ParallelAction(
+                                        robot.armUp(),
+                                        robot.wristUp()
+                                ),
+                                new SleepAction(2),
+                                robot.clawOpen(),
+                                new SleepAction(.5),
+                                robot.armWait(),
+                                robot.wristDown(),
+                                robot.setVertTarget(0)
+                        )
+
+                )
+                .setTangent(Math.toRadians(60))
+//                                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
+//                                .setTangent(Math.toRadians(90))
                 .splineToLinearHeading(new Pose2d(-28, -9, Math.toRadians(0)), Math.toRadians(0))
-                // intake the sample from the sub
-                .setTangent(Math.PI)
-                .splineToLinearHeading(new Pose2d(-40, -20, Math.toRadians(90)), Math.toRadians(-90))
+                .stopAndAdd(
+                        new SequentialAction(
+                                new ParallelAction(
+                                        robot.setExtTarget(-180),
+                                        robot.intakeUp()
+                                ),
+                                new SleepAction(.5),
+                                robot.subIntakeCheck(),
+                                robot.setExtTarget(100)
+                        )
+
+
+                )
+                // add the intake from the submersible
+                .setReversed(true)
+                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
                 .setTangent(Math.toRadians(-90))
                 .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180))
-                // deposit the sample that is with the robot
+                // deposit the sample that it has.
+
                 .build();
     }
 

@@ -50,12 +50,12 @@ public class SampleAuto extends OpMode {
         Pose2d initialPose = new Pose2d(-35, -63, Math.toRadians(90));
         drive = new PinpointDrive(hardwareMap, new Pose2d(-35, -63, Math.toRadians(90)));
 
-        Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
+        Pose2d passPose = new Pose2d(-52, -43, Math.toRadians(90));
 
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(700, 100, 330, passPose, hardwareMap, gamepad1, gamepad2, drive);
+        determineBarnacle = new DetermineBarnacle(700, 100, 330, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -76,32 +76,41 @@ public class SampleAuto extends OpMode {
             runningActions.add(
                 new ParallelAction(
                         new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                                .stopAndAdd(
-                                        new InstantAction(() -> robot.hold.setPosition(.75))
-
-                                )
-                                .setReversed(false)
-                                .splineToLinearHeading(new Pose2d(-60, -60 , Math.toRadians(45)), -Math.PI)
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                robot.setVertTarget(-2700),
-                                                new ParallelAction(
-                                                        robot.clawClose(),
-                                                        robot.armUp(),
-                                                        robot.wristUp()
-                                                ),
-                                                new SleepAction(2),
-                                                robot.clawOpen(),
-                                                new SleepAction(.5),
-                                                robot.armWait(),
-                                                robot.wristDown(),
-                                                robot.setVertTarget(0),
-                                                robot.intakeUp()
+                                .stopAndAdd( new ParallelAction(
+                                                new InstantAction(() -> robot.hold.setPosition(.3) ),
+                                                robot.rotateHor(),
+                                                robot.clawClose()
                                         )
 
 
                                 )
-                                .strafeToLinearHeading(new Vector2d(-50, -45), Math.toRadians(90))
+                                .setReversed(false)
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                robot.setVertTarget(-2700),
+                                                new ParallelAction(
+                                                        robot.rotateHor(),
+                                                        robot.clawClose(),
+                                                        robot.armUp(),
+                                                        robot.wristUp()
+                                                )
+                                        )
+                                )
+
+                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                new SleepAction(0.6),
+                                                robot.clawOpen(),
+                                                new SleepAction(0.6),
+                                                robot.armWait(),
+                                                robot.wristDown(),
+                                                robot.setVertTarget(0),
+                                                new InstantAction(()-> robot.hold.setPosition(0.8))
+
+                                        )
+                                )
+                                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),

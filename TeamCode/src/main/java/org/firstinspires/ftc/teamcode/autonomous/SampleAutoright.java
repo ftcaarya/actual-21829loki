@@ -13,6 +13,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
+import com.qualcomm.robotcore.hardware.Gamepad;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
@@ -24,11 +25,14 @@ public class SampleAutoright extends OpMode {
     ActionSchedular actionSchedular;
     DetermineBarnacle determineBarnacle;
     PinpointDrive drive;
-//    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
-    Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
     MultipleTelemetry mTelemetry;
     AllMechs robot;
     Action builder;
+    static int xPos = -28;
+    static int yPos = -9;
+
+    Gamepad currentGamepad1;
+    Gamepad previousGamepad1;
 
     @Override
     public void init() {
@@ -43,7 +47,7 @@ public class SampleAutoright extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive);
+        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -53,6 +57,9 @@ public class SampleAutoright extends OpMode {
 //                .setReversed(false)
                 .splineToLinearHeading(new Pose2d(-52, -52 , Math.toRadians(45)), -Math.PI)
                 .build();
+
+        currentGamepad1 = new Gamepad();
+        previousGamepad1 = new Gamepad();
     }
 
     @Override
@@ -63,18 +70,128 @@ public class SampleAutoright extends OpMode {
 
         Actions.runBlocking(
                 new ParallelAction(
-                        new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                                .stopAndAdd(
-                                        new InstantAction(() -> robot.hold.setPosition(.75))
+                        new SequentialAction(
+                                drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                                        .stopAndAdd( new ParallelAction(
+                                                        new InstantAction(() -> robot.hold.setPosition(.3) ),
+                                                        robot.rotateHor(),
+                                                        robot.clawClose()
+                                                )
 
-                                )
-                                .setReversed(false)
-                                .splineToLinearHeading(new Pose2d(-60, -60 , Math.toRadians(45)), -Math.PI)
+
+                                        )
+                                        .setReversed(false)
+                                        .stopAndAdd(
+                                                new SequentialAction(
+                                                        robot.setVertTarget(-2700),
+                                                        new ParallelAction(
+                                                                robot.rotateHor(),
+                                                                robot.clawClose(),
+                                                                robot.armUp(),
+                                                                robot.wristUp()
+                                                        )
+                                                )
+                                        )
+
+                                        .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+                                        .stopAndAdd(
+                                                new SequentialAction(
+                                                        new SleepAction(0.6),
+                                                        robot.clawOpen(),
+                                                        new SleepAction(0.6),
+                                                        robot.armWait(),
+                                                        robot.wristDown(),
+                                                        robot.setVertTarget(0),
+                                                        new InstantAction(()-> robot.hold.setPosition(0.8))
+
+                                                )
+                                        )
+                                        .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
+                                .turnTo(Math.toRadians(108))
+                                // intake sample
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                robot.setVertTarget(2790),
+                                                robot.setExtTarget(-200),
+                                                new SleepAction(1),
+                                                robot.checkColorRed())
+
+                                )
+                                .stopAndAdd(
+                                        new SequentialAction(
+
+                                                robot.intakeIn(),
+                                                new SleepAction(0.3),
+                                                robot.stopIntake()
+                                        )
+                                )
+                                .setTangent(Math.toRadians(180 + 120))
+
+                                .stopAndAdd(
+                                        new ParallelAction(
+                                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                                robot.setExtTarget(100)
+                                        )
+                                )
+                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                robot.armDown(),
+                                                robot.clawClose(),
+                                                new SleepAction(.5),
+                                                robot.setVertTarget(-2700),
                                                 new ParallelAction(
-                                                        robot.clawClose(),
+                                                        robot.armUp(),
+                                                        robot.wristUp()
+                                                ),
+                                                new SleepAction(1),
+                                                robot.clawOpen(),
+                                                new SleepAction(.7),
+                                                robot.armWait(),
+                                                robot.wristDown(),
+                                                robot.setVertTarget(0),
+                                                new InstantAction(()-> robot.hold.setPosition(0.75))
+                                        )
+
+                                )
+                                .setTangent((Math.PI - Math.atan((18/14.5))))
+                                .splineToLinearHeading(new Pose2d(-52, -40, Math.toRadians(145)), (Math.PI - Math.atan((18/14.5))))
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                new SleepAction(.5),
+                                                robot.setExtTarget(-250),
+                                                new SleepAction(1),
+                                                robot.checkColorRed()
+
+                                        )
+                                )
+//                                .splineToConstantHeading(new Vector2d(-55, -44), Math.toRadians(95))
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                robot.intakeIn(),
+                                                new SleepAction(0.5),
+                                                robot.stopIntake()
+
+                                        )
+                                )
+//                                .setTangent(0)
+
+                                .stopAndAdd(
+                                        new ParallelAction(
+                                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                                robot.setExtTarget(100)
+                                        )
+                                )
+                                .setTangent(Math.toRadians(180 + 120))
+                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                                // deposit the sample that is with the robot
+                                .stopAndAdd(
+                                        new SequentialAction(
+                                                robot.armDown(),
+                                                robot.clawClose(),
+                                                new SleepAction(.5),
+                                                robot.setVertTarget(-2700),
+                                                new SleepAction(0.5),
+                                                new ParallelAction(
                                                         robot.armUp(),
                                                         robot.wristUp()
                                                 ),
@@ -86,18 +203,23 @@ public class SampleAutoright extends OpMode {
                                                 robot.setVertTarget(0)
                                         )
 
-
                                 )
-                                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                determineBarnacle.detectTarget(),
-                                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-//                                    actionSchedular.run();
-                                                DetermineBarnacle.getTargetSampleTrajectory()
-
-                                        )
-                                ).build()),
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToSplineHeading(new Pose2d(-59, -50, Math.toRadians(90)), Math.toRadians(180))
+//                                .setTangent(Math.toRadians(90))
+//                                .splineToConstantHeading(new Vector2d(-47, -6), Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(-30, -9, Math.toRadians(0)), Math.toRadians(0))
+//                                // intake sample from the sub
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(-47, -6, Math.toRadians(90)), Math.toRadians(180))
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToConstantHeading(new Vector2d(-59, -50), Math.toRadians(270))
+//                                .setTangent(0)
+//                                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(270))
+//                                // deposit the sample that is with the robot
+//                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0))
+                                .build()),
                         robot.updateExtPID(),
                         robot.updateVertPID()
                 )

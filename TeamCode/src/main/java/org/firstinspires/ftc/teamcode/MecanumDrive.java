@@ -58,9 +58,9 @@ public class MecanumDrive {
         // TODO: fill in these values based on
         //   see https://ftc-docs.firstinspires.org/en/latest/programming_resources/imu/imu.html?highlight=imu#physical-hub-mounting
         public RevHubOrientationOnRobot.LogoFacingDirection logoFacingDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.UP;
+                RevHubOrientationOnRobot.LogoFacingDirection.FORWARD;
         public RevHubOrientationOnRobot.UsbFacingDirection usbFacingDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.UP;
 
         // drive model parameters
         public double inPerTick = 1; // If you're using OTOS/Pinpoint leave this at 1 (all values will be in inches, 1 tick = 1 inch)
@@ -297,7 +297,7 @@ public class MecanumDrive {
 
             Pose2d error = txWorldTarget.value().minusExp(pose);
 
-            if (t >= timeTrajectory.duration && error.position.norm() < 0.75 && robotVelRobot.linearVel.norm() < 0.5 && robotVelRobot.angVel < Math.toRadians(1.5) && error.position.x < 0.75 && Math.toDegrees(error.heading.toDouble()) < 1.0 || t >= timeTrajectory.duration + 1) {
+            if (t >= timeTrajectory.duration && error.position.norm() < 0.75 && robotVelRobot.linearVel.norm() < 0.5 && robotVelRobot.angVel < Math.toRadians(1.5) && error.position.x < 0.75 && Math.toDegrees(error.heading.toDouble()) < 1.0 || t >= timeTrajectory.duration + .5) {
                 leftFront.setPower(0);
                 leftBack.setPower(0);
                 rightBack.setPower(0);
