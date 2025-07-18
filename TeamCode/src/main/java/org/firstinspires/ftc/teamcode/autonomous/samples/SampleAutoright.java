@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.autonomous.samples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -18,15 +18,13 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
-import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSample;
 
-@Autonomous(name = "Sample Side Auto left", group = "robot")
-public class SampleAutoleft extends OpMode {
+@Autonomous(name = "Sample Side Auto right", group = "robot")
+public class SampleAutoright extends OpMode {
     ActionSchedular actionSchedular;
-    DetermineBarnacle determineBarnacle;
+    DetermineBarnacleSample determineBarnacle;
     PinpointDrive drive;
-//    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
-    Pose2d passPose = new Pose2d(-54, -45, Math.toRadians(90));
     MultipleTelemetry mTelemetry;
     AllMechs robot;
     Action builder;
@@ -38,7 +36,7 @@ public class SampleAutoleft extends OpMode {
 
     @Override
     public void init() {
-//        actionSchedular = new ActionSchedular();
+        actionSchedular = new ActionSchedular();
 
         Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
         Pose2d initialPose = new Pose2d(-35, -63, Math.toRadians(90));
@@ -49,7 +47,7 @@ public class SampleAutoleft extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleSample(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -65,33 +63,6 @@ public class SampleAutoleft extends OpMode {
     }
 
     @Override
-    public void init_loop() {
-        previousGamepad1.copy(currentGamepad1);
-
-        telemetry.addData("x pos: ", xPos);
-        telemetry.addData("y pos: ", yPos);
-
-        if (currentGamepad1.dpad_left && !previousGamepad1.dpad_left) {
-            xPos -= 1;
-        }
-
-        if (currentGamepad1.dpad_right && !previousGamepad1.dpad_right) {
-            xPos += 1;
-        }
-
-        if (currentGamepad1.dpad_up && !previousGamepad1.dpad_up) {
-            yPos += 1;
-        }
-
-        if (currentGamepad1.dpad_down && !previousGamepad1.dpad_down) {
-            yPos -= 1;
-        }
-
-        telemetry.update();
-        currentGamepad1.copy(gamepad1);
-    }
-
-    @Override
     public void start() {
 
         TrajectoryActionBuilder builder = drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)));
@@ -99,68 +70,69 @@ public class SampleAutoleft extends OpMode {
 
         Actions.runBlocking(
                 new ParallelAction(
-                        new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                                .stopAndAdd( new ParallelAction(
-                                                new InstantAction(() -> robot.hold.setPosition(.3) ),
-                                                robot.rotateHor(),
-                                                robot.clawClose()
-                                )
-
-
-                                )
-                                .setReversed(false)
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                robot.setVertTarget(-2700),
-                                                new ParallelAction(
+                        new SequentialAction(
+                                drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
+                                        .stopAndAdd( new ParallelAction(
+                                                        new InstantAction(() -> robot.hold.setPosition(.3) ),
                                                         robot.rotateHor(),
-                                                        robot.clawClose(),
-                                                        robot.armUp(),
-                                                        robot.wristUp()
+                                                        robot.clawClose()
+                                                )
+
+
+                                        )
+                                        .setReversed(false)
+                                        .stopAndAdd(
+                                                new SequentialAction(
+                                                        robot.setVertTarget(-2700),
+                                                        new ParallelAction(
+                                                                robot.rotateHor(),
+                                                                robot.clawClose(),
+                                                                robot.armUp(),
+                                                                robot.wristUp()
+                                                        )
                                                 )
                                         )
-                                )
 
-                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+                                        .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+                                        .stopAndAdd(
+                                                new SequentialAction(
+                                                        new SleepAction(0.6),
+                                                        robot.clawOpen(),
+                                                        new SleepAction(0.6),
+                                                        robot.armWait(),
+                                                        robot.wristDown(),
+                                                        robot.setVertTarget(0),
+                                                        new InstantAction(()-> robot.hold.setPosition(0.7))
+
+                                                )
+                                        )
+                                        .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
+                                .turnTo(Math.toRadians(108))
+                                // intake sample
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                new SleepAction(0.6),
-                                                robot.clawOpen(),
-                                                new SleepAction(0.6),
-                                                robot.armWait(),
-                                                robot.wristDown(),
-                                                robot.setVertTarget(0),
-                                                new InstantAction(()-> robot.hold.setPosition(0.7))
+                                                robot.setExtTarget(-210),
+                                                new SleepAction(1),
+                                                robot.checkColorRed())
 
-                                        )
                                 )
-                                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(90))
-                                .turnTo(Math.toRadians(79))
-                        .stopAndAdd(
-                                new SequentialAction(
-                                        robot.setExtTarget(-250),
-                                        new SleepAction(1),
-                                        robot.checkColorRed())
-
-                        )
-
                                 .stopAndAdd(
                                         new SequentialAction(
 
                                                 robot.intakeIn(),
                                                 new SleepAction(0.3),
                                                 robot.stopIntake()
-                                                )
+                                        )
                                 )
-                                .setTangent(0)
+                                .setTangent(Math.toRadians(180 + 120))
 
-                        .stopAndAdd(
-                                new ParallelAction(
-                                        new InstantAction(() -> robot.hold.setPosition(.3)),
-                                        robot.setExtTarget(100)
+                                .stopAndAdd(
+                                        new ParallelAction(
+                                                new InstantAction(() -> robot.hold.setPosition(.3)),
+                                                robot.setExtTarget(100)
+                                        )
                                 )
-                        )
-                                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), Math.PI/2)
+                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.armDown(),
@@ -171,9 +143,9 @@ public class SampleAutoleft extends OpMode {
                                                         robot.armUp(),
                                                         robot.wristUp()
                                                 ),
-                                                new SleepAction(1),
+                                                new SleepAction(1.5),
                                                 robot.clawOpen(),
-                                                new SleepAction(.7),
+                                                new SleepAction(1),
                                                 robot.armWait(),
                                                 robot.wristDown(),
                                                 robot.setVertTarget(0),
@@ -181,14 +153,12 @@ public class SampleAutoleft extends OpMode {
                                         )
 
                                 )
-                                .setTangent(Math.toRadians(90))
-                                // add the deposit action for the sample it holds
-                                .splineToLinearHeading(new Pose2d(-59, -40, Math.toRadians(90)), Math.toRadians(90))
-                                // add the intake for the middle sample
+                                .setTangent((Math.PI - Math.atan((18/14.5))))
+                                .splineToLinearHeading(new Pose2d(-52, -36, Math.toRadians(138)), (Math.PI - Math.atan((18/14.5))))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 new SleepAction(.5),
-                                                robot.setExtTarget(-150),
+                                                robot.setExtTarget(-350),
                                                 new SleepAction(1),
                                                 robot.checkColorRed()
 
@@ -211,7 +181,9 @@ public class SampleAutoleft extends OpMode {
                                                 robot.setExtTarget(100)
                                         )
                                 )
-                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), -Math.PI)
+                                .setTangent(Math.toRadians(180 + 120))
+                                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                                // deposit the sample that is with the robot
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.armDown(),
@@ -232,30 +204,21 @@ public class SampleAutoleft extends OpMode {
                                         )
 
                                 )
-                                .setTangent(Math.toRadians(60))
-//                                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToSplineHeading(new Pose2d(-59, -50, Math.toRadians(90)), Math.toRadians(180))
 //                                .setTangent(Math.toRadians(90))
-                                .splineToLinearHeading(new Pose2d(xPos, yPos, Math.toRadians(0)), Math.toRadians(0))
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                new ParallelAction(
-                                                        robot.setExtTarget(-180),
-                                                        robot.intakeUp()
-                                                ),
-                                                new SleepAction(.5),
-                                                robot.subIntakeCheck(),
-                                                robot.setExtTarget(100)
-                                        )
-
-
-                                )
-                                // add the intake from the submersible
-                                .setReversed(true)
-                                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
-                                .setTangent(Math.toRadians(-90))
-                                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(180))
-                                // deposit the sample that it has.
-
+//                                .splineToConstantHeading(new Vector2d(-47, -6), Math.toRadians(0))
+//                                .splineToLinearHeading(new Pose2d(-30, -9, Math.toRadians(0)), Math.toRadians(0))
+//                                // intake sample from the sub
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToLinearHeading(new Pose2d(-47, -6, Math.toRadians(90)), Math.toRadians(180))
+//                                .setTangent(Math.toRadians(180))
+//                                .splineToConstantHeading(new Vector2d(-59, -50), Math.toRadians(270))
+//                                .setTangent(0)
+//                                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(270))
+//                                // deposit the sample that is with the robot
+//                                .setTangent(Math.toRadians(0))
+                                .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0))
                                 .build()),
                         robot.updateExtPID(),
                         robot.updateVertPID()
@@ -294,9 +257,9 @@ public class SampleAutoleft extends OpMode {
                 .stopAndAdd(
                         new SequentialAction(
                                 determineBarnacle.detectTarget(),
-                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
+                                new InstantAction(DetermineBarnacleSample::generateTargetTrajectoryLeft),
 //                                    actionSchedular.run();
-                                    DetermineBarnacle.getTargetSampleTrajectory()
+                                DetermineBarnacleSample.getTargetSampleTrajectory()
 
                         )
                 );

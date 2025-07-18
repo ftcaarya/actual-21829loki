@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.autonomous.samples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -11,18 +11,13 @@ import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
 import com.acmerobotics.roadrunner.TrajectoryActionBuilder;
 import com.acmerobotics.roadrunner.Vector2d;
-import com.acmerobotics.roadrunner.ftc.Actions;
 import com.qualcomm.robotcore.eventloop.opmode.Autonomous;
-import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
-import org.firstinspires.ftc.teamcode.MecanumDrive;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
-import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
-import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSample;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
-import org.opencv.core.Mat;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -30,7 +25,7 @@ import java.util.List;
 @Autonomous(name = "Sample Side Auto", group = "robot")
 public class SampleAuto extends OpMode {
 //    ActionSchedular actionSchedular;
-    DetermineBarnacle determineBarnacle;
+    DetermineBarnacleSample determineBarnacle;
     PinpointDrive drive;
     private final FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
@@ -55,7 +50,7 @@ public class SampleAuto extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(700, 100, 330, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleSample(700, 100, 330, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -115,20 +110,20 @@ public class SampleAuto extends OpMode {
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),
                                                 new InstantAction(() -> {
-                                                    ColourMassDetectionProcessor.PropPositions detected = DetermineBarnacle.getRecordedPosition();
+                                                    ColourMassDetectionProcessor.PropPositions detected = DetermineBarnacleSample.getRecordedPosition();
 
                                                     telemetry.addData("=== DETECTION PHASE ===", "");
                                                     telemetry.addData("Detected Position", detected != null ? detected.toString() : "NULL");
                                                     telemetry.update();
 
                                                     telemetry.addData("=== GENERATION PHASE ===", "");
-                                                    DetermineBarnacle.generateTargetTrajectory();
+                                                    DetermineBarnacleSample.generateTargetTrajectory();
 
-                                                    boolean hasTrajectory = DetermineBarnacle.hasTrajectory();
+                                                    boolean hasTrajectory = DetermineBarnacleSample.hasTrajectory();
                                                     telemetry.addData("Trajectory Generated", hasTrajectory ? "YES" : "NO");
 
                                                     if (hasTrajectory) {
-                                                        Action traj = DetermineBarnacle.getTargetSampleTrajectory();
+                                                        Action traj = DetermineBarnacleSample.getTargetSampleTrajectory();
                                                         if (traj != null) {
                                                             telemetry.addData("Adding trajectory to runningActions", "SUCCESS");
                                                             telemetry.addData("Current runningActions size", runningActions.size());
@@ -185,42 +180,6 @@ public class SampleAuto extends OpMode {
         telemetry.addData("Actions After Cleanup", runningActions.size());
         telemetry.update();
         dash.sendTelemetryPacket(packet);
-    }
-
-
-
-    private TrajectoryActionBuilder wholeSequence() {
-         TrajectoryActionBuilder builder = drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
-                .setReversed(false)
-                .splineToLinearHeading(new Pose2d(-52, -52 , Math.toRadians(45)), -Math.PI)
-                .stopAndAdd(
-                        new SequentialAction(
-                                new ParallelAction(
-                                        robot.clawClose(),
-                                        robot.armUp(),
-                                        robot.setVertTarget(-2700)
-                                ),
-                                new SleepAction(2),
-                                robot.clawOpen(),
-                                robot.armWait(),
-                                robot.setVertTarget(0)
-                        )
-
-
-                )
-                .strafeToLinearHeading(new Vector2d(-54, -45), Math.toRadians(90))
-//                 Add the Anonymous Action for the Vision.
-                .stopAndAdd(
-                        new SequentialAction(
-                                determineBarnacle.detectTarget(),
-                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
-//                                    actionSchedular.run();
-                                    DetermineBarnacle.getTargetSampleTrajectory()
-
-                        )
-                );
-
-        return builder;
     }
 
 

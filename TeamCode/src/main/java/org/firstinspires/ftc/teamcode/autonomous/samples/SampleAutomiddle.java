@@ -1,4 +1,4 @@
-package org.firstinspires.ftc.teamcode.autonomous;
+package org.firstinspires.ftc.teamcode.autonomous.samples;
 
 import com.acmerobotics.dashboard.FtcDashboard;
 import com.acmerobotics.dashboard.telemetry.MultipleTelemetry;
@@ -18,12 +18,12 @@ import com.qualcomm.robotcore.hardware.Gamepad;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.ActionSchedular;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
-import org.firstinspires.ftc.teamcode.extraneous.DetermineBarnacle;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSample;
 
 @Autonomous(name = "Sample Side Auto middle", group = "robot")
 public class SampleAutomiddle extends OpMode {
     ActionSchedular actionSchedular;
-    DetermineBarnacle determineBarnacle;
+    DetermineBarnacleSample determineBarnacle;
     PinpointDrive drive;
     MultipleTelemetry mTelemetry;
     AllMechs robot;
@@ -47,7 +47,7 @@ public class SampleAutomiddle extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacle(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleSample(1000, 100, 200, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -252,9 +252,9 @@ public class SampleAutomiddle extends OpMode {
                 .stopAndAdd(
                         new SequentialAction(
                                 determineBarnacle.detectTarget(),
-                                new InstantAction(DetermineBarnacle::generateTargetTrajectoryLeft),
+                                new InstantAction(DetermineBarnacleSample::generateTargetTrajectoryLeft),
 //                                    actionSchedular.run();
-                                    DetermineBarnacle.getTargetSampleTrajectory()
+                                    DetermineBarnacleSample.getTargetSampleTrajectory()
 
                         )
                 );
