@@ -198,6 +198,11 @@ public class TeleOpTesting extends OpMode {
             );
 
         }
+        if (gamepad2.square) {
+            runningActions.add(
+                    robot.stopIntake()
+            );
+        }
 //
 
 

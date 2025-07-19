@@ -45,11 +45,11 @@ public class AllMechs {
     public Servo claw, rotate, wrist_left, wrist_right, arm_left, arm_right, hold, pooper;
 
 
-    public static final double POOPER_BLOCK = 1;
+    public static final double POOPER_BLOCK = .75;
     public static final double POOPER_PASS = .4;
 
-    public static final double CLAW_OPEN = 1;
-    public static final double CLAW_CLOSE = 0.05;
+    public static final double CLAW_OPEN = 0.4;
+    public static final double CLAW_CLOSE = 1;
 
     public static double wrist_left_down = 1;
 
@@ -63,12 +63,12 @@ public class AllMechs {
     public static double wrist_right_up = 1;
 
     public static double arm_left_up = .85;
-    public static double arm_left_spec = 0.95;
+    public static double arm_left_spec = 1;
 
     public static double arm_left_down = 0.32;
 
     public static double arm_right_up = 0.15;
-    public static double arm_right_spec = 0.05;
+    public static double arm_right_spec = 0;
     public static double arm_right_down = 0.68;
 
     public static double arm_left_wait = 0.52;
@@ -81,13 +81,13 @@ public class AllMechs {
 
 
     public static final double rotate_hor = 0.22;
-    public static final double rotate_opp_hor = 0.82;
+    public static final double rotate_opp_hor = 0.85;
 
     public static double intake_up = .3;
     public static double intake_down = .8;
 
 
-    public static double p = 0.015, i = 0, d = 0.00065;
+    public static double p = 0.01, i = 0, d = 0.00065;
     public static double f = 0.06;
 
 
@@ -251,6 +251,7 @@ public class AllMechs {
                 new SleepAction(0.5),
                 setExtTarget(100),
                 armDown(),
+                new SleepAction(0.5),
                 clawClose(),
                 new SleepAction(1),
                 new ParallelAction(
@@ -371,7 +372,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.79);
+            hold.setPosition(.76);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
@@ -395,7 +396,7 @@ public class AllMechs {
                 gamepad1.rumbleBlips(1);
                 intake.setPower(-.65);
                 return true;
-            } else if (gamepad1.square) {
+            } else if (gamepad2.square) {
                 pooper.setPosition(POOPER_BLOCK);
                 hold.setPosition(.3);
                 intake.setPower(0);
@@ -516,7 +517,7 @@ public class AllMechs {
                 new InstantAction(()-> wrist_left.setPosition(wrist_left_up)),
                 clawClose(),
                 rotateoppHor(),
-                setVertTarget(-300)
+                setVertTarget(-470)
 
 
 
@@ -526,7 +527,9 @@ public class AllMechs {
         return new ParallelAction(
                 new InstantAction(()-> arm_right.setPosition(arm_right_get)),
                 new InstantAction(()-> arm_left.setPosition(arm_left_get)),
-                new InstantAction(()-> wrist_left.setPosition(wrist_left_spec))
+                new InstantAction(()-> wrist_left.setPosition(wrist_left_spec)),
+                setVertTarget(0),
+                rotateHor()
 
         );
     }
