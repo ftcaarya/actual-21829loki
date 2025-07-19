@@ -27,7 +27,7 @@ public class SpecAutoright extends OpMode {
     public void init() {
         drive = new PinpointDrive(hardwareMap, new Pose2d(10, -63, Math.toRadians(270)));
 
-        Pose2d passPose = new Pose2d(58, -45, Math.toRadians(90));
+        Pose2d passPose = new Pose2d(73, -45, Math.toRadians(90));
 
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
 
@@ -74,7 +74,7 @@ public class SpecAutoright extends OpMode {
                                         .stopAndAdd(
                                                 new SequentialAction(
                                                         new InstantAction(() -> robot.hold.setPosition(.78)),
-                                                        robot.setExtTarget(-200),
+                                                        robot.setExtTarget(-180),
                                                         new SleepAction(1),
                                                         robot.checkColorRed()
                                                 )
@@ -96,7 +96,7 @@ public class SpecAutoright extends OpMode {
                                         .stopAndAdd(
                                                 new SequentialAction(
                                                         new InstantAction(() -> robot.hold.setPosition(.78)),
-                                                        robot.setExtTarget(-200),
+                                                        robot.setExtTarget(-180),
                                                         new SleepAction(1),
                                                         robot.checkColorRed()
                                                 )
@@ -109,29 +109,32 @@ public class SpecAutoright extends OpMode {
                                                 )
                                         )
                                         .turnTo(Math.toRadians(270))
+
                                         .stopAndAdd(
                                                 new SequentialAction(
                                                         new SequentialAction(
                                                                 new InstantAction(() -> robot.intake.setPower(.6)),
                                                                 new SleepAction(.5),
                                                                 new InstantAction(() -> robot.intake.setPower(0)),
+                                                                new SleepAction(1),
                                                                 robot.getSpec()
                                                         )
                                                 )
                                         )
-                                        .setTangent(Math.toRadians(270))
-                                        .splineToConstantHeading(new Vector2d(48, -62), Math.toRadians(270))
-//                                        .stopAndAdd(
-//                                                new SequentialAction(
-//
-//                                                        new SleepAction(0.5),
-//                                                        robot.clawClose(),
-//                                                        new SleepAction(0.5),
-//                                                        robot.putSpec()
-//                                                )
-//                                        )
-//                                        .setTangent(Math.toRadians(140))
-//                                        .splineToLinearHeading(new Pose2d(-5, -32, Math.toRadians(270)), Math.toRadians(100))
+                                        .setTangent(Math.toRadians(250))
+                                        .splineToConstantHeading(new Vector2d(55, -62), Math.toRadians(250))
+                                        .stopAndAdd(
+                                                new SequentialAction(
+
+                                                        new SleepAction(0.5),
+                                                        robot.clawClose(),
+                                                        new SleepAction(0.5),
+                                                        robot.putSpec()
+                                                )
+                                        )
+                                        .setTangent(Math.toRadians(140))
+                                        .splineToLinearHeading(new Pose2d(-5, -32, Math.toRadians(270)), Math.toRadians(100))
+
 //                                        .stopAndAdd(
 //                                                new SequentialAction(
 //                                                        new SleepAction(0.5),

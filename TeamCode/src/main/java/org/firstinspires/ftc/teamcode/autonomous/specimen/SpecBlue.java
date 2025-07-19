@@ -15,6 +15,7 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleBlueSpec;
 import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSpec;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessorSpec;
@@ -22,9 +23,9 @@ import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessorSpec;
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "specimen red")
-public class SpecAuto extends OpMode {
-    DetermineBarnacleSpec determineBarnacle;
+@Autonomous(name = "specimen blue")
+public class SpecBlue extends OpMode {
+    DetermineBarnacleBlueSpec determineBarnacle;
     PinpointDrive drive;
     private final FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
@@ -42,7 +43,7 @@ public class SpecAuto extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 600, 600, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacleSpec(700, 600, 600, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleBlueSpec(700, 600, 600, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
         telemetry.addData("Testing Init:", "running");
     }
@@ -78,47 +79,47 @@ public class SpecAuto extends OpMode {
                                         .splineToLinearHeading(new Pose2d(50, -45, Math.toRadians(90)), Math.toRadians(70))
                                         .setTangent(0)
                                         .splineToConstantHeading(new Vector2d(73, -45), Math.toRadians(0))
-                                .stopAndAdd(
-                                        new SequentialAction(
-                                                determineBarnacle.detectTarget(),
-                                                new InstantAction(() -> {
-                                                    ColourMassDetectionProcessorSpec.PropPositions detected = DetermineBarnacleSpec.getRecordedPosition();
+                                        .stopAndAdd(
+                                                new SequentialAction(
+                                                        determineBarnacle.detectTarget(),
+                                                        new InstantAction(() -> {
+                                                            ColourMassDetectionProcessorSpec.PropPositions detected = DetermineBarnacleBlueSpec.getRecordedPosition();
 
-                                                    telemetry.addData("=== DETECTION PHASE ===", "");
-                                                    telemetry.addData("Detected Position", detected != null ? detected.toString() : "NULL");
-                                                    telemetry.update();
+                                                            telemetry.addData("=== DETECTION PHASE ===", "");
+                                                            telemetry.addData("Detected Position", detected != null ? detected.toString() : "NULL");
+                                                            telemetry.update();
 
-                                                    telemetry.addData("=== GENERATION PHASE ===", "");
-                                                    DetermineBarnacleSpec.generateTargetTrajectory();
+                                                            telemetry.addData("=== GENERATION PHASE ===", "");
+                                                            DetermineBarnacleBlueSpec.generateTargetTrajectory();
 
-                                                    boolean hasTrajectory = DetermineBarnacleSpec.hasTrajectory();
-                                                    telemetry.addData("Trajectory Generated", hasTrajectory ? "YES" : "NO");
+                                                            boolean hasTrajectory = DetermineBarnacleBlueSpec.hasTrajectory();
+                                                            telemetry.addData("Trajectory Generated", hasTrajectory ? "YES" : "NO");
 
-                                                    if (hasTrajectory) {
-                                                        Action traj = DetermineBarnacleSpec.getTargetSampleTrajectory();
-                                                        if (traj != null) {
-                                                            telemetry.addData("Adding trajectory to runningActions", "SUCCESS");
-                                                            telemetry.addData("Current runningActions size", runningActions.size());
+                                                            if (hasTrajectory) {
+                                                                Action traj = DetermineBarnacleBlueSpec.getTargetSampleTrajectory();
+                                                                if (traj != null) {
+                                                                    telemetry.addData("Adding trajectory to runningActions", "SUCCESS");
+                                                                    telemetry.addData("Current runningActions size", runningActions.size());
 
-                                                            runningActions.add(traj);
+                                                                    runningActions.add(traj);
 
-                                                            telemetry.addData("New runningActions size", runningActions.size());
-                                                            telemetry.addData("Trajectory added for", detected.toString());
-                                                        } else {
-                                                            telemetry.addData("ERROR", "getTargetSampleTrajectory returned null");
+                                                                    telemetry.addData("New runningActions size", runningActions.size());
+                                                                    telemetry.addData("Trajectory added for", detected.toString());
+                                                                } else {
+                                                                    telemetry.addData("ERROR", "getTargetSampleTrajectory returned null");
+                                                                }
+                                                            } else {
+                                                                telemetry.addData("ERROR", "No trajectory was generated");
+                                                            }
+
+                                                            telemetry.update();
                                                         }
-                                                    } else {
-                                                        telemetry.addData("ERROR", "No trajectory was generated");
-                                                    }
-
-                                                    telemetry.update();
-                                                }
+                                                        )
                                                 )
                                         )
-                                )
 
 
-                                .build()
+                                        .build()
                         ),
                         robot.updateExtPID(),
                         robot.updateVertPID()

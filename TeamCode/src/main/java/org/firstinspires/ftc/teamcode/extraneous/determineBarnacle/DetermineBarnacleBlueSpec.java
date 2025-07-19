@@ -16,11 +16,10 @@ import com.qualcomm.robotcore.hardware.HardwareMap;
 import org.firstinspires.ftc.robotcore.external.hardware.camera.WebcamName;
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
-import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessorSpec;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-public class DetermineBarnacleSpec {
+public class DetermineBarnacleBlueSpec {
     public VisionPortal visionPortal;
     public ColourMassDetectionProcessorSpec colourMassDetectionProcessor;
 
@@ -36,7 +35,7 @@ public class DetermineBarnacleSpec {
     private int left, right;
 
 
-    public DetermineBarnacleSpec(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
+    public DetermineBarnacleBlueSpec(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
         pose = poseGiven;
         this.hardwareMap = hardwareMap;
         this.minArea = minArea;
@@ -242,7 +241,7 @@ public class DetermineBarnacleSpec {
                                 new InstantAction(() -> robot.hold.setPosition(.78)),
                                 robot.setExtTarget(-180),
                                 new SleepAction(1),
-                                robot.checkColorRed()
+                                robot.checkColorBlue()
                         )
                 )
                 .stopAndAdd(
@@ -264,7 +263,7 @@ public class DetermineBarnacleSpec {
                                 new InstantAction(() -> robot.hold.setPosition(.78)),
                                 robot.setExtTarget(-180),
                                 new SleepAction(1),
-                                robot.checkColorRed()
+                                robot.checkColorBlue()
                         )
                 )
 

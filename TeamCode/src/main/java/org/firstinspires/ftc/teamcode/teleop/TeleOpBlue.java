@@ -27,8 +27,8 @@ import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import java.util.ArrayList;
 import java.util.List;
 
-@TeleOp(name="TeleOp Red")
-public class TeleOpTesting extends OpMode {
+@TeleOp(name="TeleOp Blue")
+public class TeleOpBlue extends OpMode {
     AllMechs robot;
     ActionSchedular actionSchedular;
     MecanumDrive drive;
@@ -94,7 +94,7 @@ public class TeleOpTesting extends OpMode {
         if (gamepad2.dpad_up) {
             runningActions.add(
                     robot.transfer()
-                    );
+            );
         }
 
         if (gamepad2.dpad_down) {
@@ -132,9 +132,9 @@ public class TeleOpTesting extends OpMode {
 
             runningActions.add(
                     new ParallelAction(
-                    robot.setExtTarget(100),
-                    robot.intakeUp(),
-                    robot.stopIntake()
+                            robot.setExtTarget(100),
+                            robot.intakeUp(),
+                            robot.stopIntake()
                     )
             );
         }
@@ -154,7 +154,7 @@ public class TeleOpTesting extends OpMode {
         if (gamepad2.right_stick_button) {
             runningActions.add(new ParallelAction(
                     robot.intakeDown(),
-                    robot.checkColorRed(),
+                    robot.checkColorBlue(),
 
                     robot.armWait()
             ));
