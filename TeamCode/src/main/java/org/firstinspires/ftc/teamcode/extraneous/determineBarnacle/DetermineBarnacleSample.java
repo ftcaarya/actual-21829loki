@@ -9,6 +9,7 @@ import com.acmerobotics.roadrunner.ParallelAction;
 import com.acmerobotics.roadrunner.Pose2d;
 import com.acmerobotics.roadrunner.SequentialAction;
 import com.acmerobotics.roadrunner.SleepAction;
+import com.acmerobotics.roadrunner.TranslationalVelConstraint;
 import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.hardware.HardwareMap;
@@ -142,7 +143,7 @@ public class DetermineBarnacleSample {
     private static void generateLeftTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
 //
-                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(76))
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(76), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 new InstantAction(()-> robot.hold.setPosition(0.75)),
@@ -168,10 +169,11 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(100)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), Math.PI/2)
+                .splineToLinearHeading(new Pose2d(-59, -59    , Math.toRadians(45)), Math.PI/2, new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
+                                new SleepAction(.5),
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -200,7 +202,7 @@ public class DetermineBarnacleSample {
                 )
                 .setTangent(Math.toRadians(90))
                 // add the deposit action for the sample it holds
-                .strafeToLinearHeading(new Vector2d(-58.5, -40), Math.toRadians(90))
+                .strafeToLinearHeading(new Vector2d(-58, -40), Math.toRadians(90), new TranslationalVelConstraint(100))
                 // add the intake for the middle sample
                 .stopAndAdd(
                         new SequentialAction(
@@ -228,10 +230,11 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(100)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), -Math.PI)
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
+                                new SleepAction(.5),
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -249,18 +252,18 @@ public class DetermineBarnacleSample {
                         )
 
                 )
-                .setTangent(Math.toRadians(60))
+                .setTangent(Math.toRadians(225))
 //                                .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(90))
 //                                .setTangent(Math.toRadians(90))
 
-                .splineToLinearHeading(new Pose2d(-54, -52, Math.toRadians(45)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-62, -62, Math.toRadians(45)), Math.toRadians(225), new TranslationalVelConstraint(100))
 
                 .build();
     }
 
     private static void generateMiddleTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(74))
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(74), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.stopIntake(),
@@ -285,10 +288,11 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(120)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-58.5, -58.5, Math.toRadians(45)), -Math.PI)
+                .splineToLinearHeading(new Pose2d(-58.5, -58.5, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
+                                new SleepAction(.5),
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -316,7 +320,7 @@ public class DetermineBarnacleSample {
                         )
                 )
                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                .splineToLinearHeading(new Pose2d(-53.5, -39, Math.toRadians(133)), (Math.PI - Math.atan((18/14.5))))
+                .splineToLinearHeading(new Pose2d(-53.5, -39, Math.toRadians(133)), (Math.PI - Math.atan((18/14.5))), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
@@ -344,11 +348,13 @@ public class DetermineBarnacleSample {
                         )
                 )
                 .setTangent(Math.toRadians(180 + 120))
-                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120), new TranslationalVelConstraint(100))
                 // deposit the sample that is with the robot
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
+                                new SleepAction(.5),
+
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -373,14 +379,14 @@ public class DetermineBarnacleSample {
 //                                        .setReversed(true)
 //                                        .splineToLinearHeading(new Pose2d(-45, -20, Math.toRadians(90)), Math.toRadians(-90))
 //                                        .setTangent(Math.toRadians(-90))
-                .splineToLinearHeading(new Pose2d(-40, -55, Math.toRadians(45)), Math.toRadians(180))
+                .splineToLinearHeading(new Pose2d(-40, -55, Math.toRadians(45)), Math.toRadians(180), new TranslationalVelConstraint(100))
                 // deposit the sample that it has.
                 .build();
     }
 
     private static void generateRightTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(107))                // intake sample
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(104), new TranslationalVelConstraint(100))                // intake sample
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.stopIntake(),
@@ -405,10 +411,12 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(100)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
+                                new SleepAction(0.5),
                                 robot.armDown(),
+                                new SleepAction(.5),
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -436,7 +444,7 @@ public class DetermineBarnacleSample {
                         )
                 )
                 .setTangent((Math.PI - Math.atan((18/14.5))))
-                .splineToLinearHeading(new Pose2d(-53, -39, Math.toRadians(134)), (Math.PI - Math.atan((18/14.5))))
+                .splineToLinearHeading(new Pose2d(-53, -39, Math.toRadians(134)), (Math.PI - Math.atan((18/14.5))), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
@@ -464,11 +472,12 @@ public class DetermineBarnacleSample {
                         )
                 )
                 .setTangent(Math.toRadians(180 + 120))
-                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120), new TranslationalVelConstraint(100))
                 // deposit the sample that is with the robot
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
+                                new SleepAction(.5),
                                 robot.clawClose(),
                                 new SleepAction(.5),
                                 robot.setVertTarget(-2700),
@@ -500,7 +509,7 @@ public class DetermineBarnacleSample {
 //                                .splineToLinearHeading(new Pose2d(-52, -52, Math.toRadians(45)), Math.toRadians(270))
 //                                // deposit the sample that is with the robot
 //                                .setTangent(Math.toRadians(0))
-                .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0))
+                .splineToLinearHeading(new Pose2d(-30, -55, Math.toRadians(0)), Math.toRadians(0), new TranslationalVelConstraint(100))
                 .build();
     }
 

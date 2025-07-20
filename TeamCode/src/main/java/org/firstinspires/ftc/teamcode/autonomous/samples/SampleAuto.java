@@ -106,7 +106,7 @@ public class SampleAuto extends OpMode {
 
                                         )
                                 )
-                                .strafeToLinearHeading(new Vector2d(-50, -43), Math.toRadians(90))
+                                .strafeToLinearHeading(new Vector2d(-48, -43), Math.toRadians(90))
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),
