@@ -288,7 +288,7 @@ public class DetermineBarnacleBlueSample {
                                 robot.setExtTarget(120)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-58.5, -58.5, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(-58, -59, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
@@ -324,7 +324,7 @@ public class DetermineBarnacleBlueSample {
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
-                                robot.setExtTarget(-310),
+                                robot.setExtTarget(-270),
                                 new SleepAction(1),
                                 robot.checkColorBlue()
 

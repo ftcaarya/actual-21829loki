@@ -80,10 +80,12 @@ public class SampleAuto extends OpMode {
 
 
                                 )
-                                .setReversed(false)
+                                .setTangent(Math.toRadians(90))
+                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.setVertTarget(-2700),
+                                                new SleepAction(1),
                                                 new ParallelAction(
                                                         robot.rotateHor(),
                                                         robot.clawClose(),
@@ -93,10 +95,10 @@ public class SampleAuto extends OpMode {
                                         )
                                 )
 
-                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                new SleepAction(0.6),
+                                                new SleepAction(2),
                                                 robot.clawOpen(),
                                                 new SleepAction(0.6),
                                                 robot.armWait(),

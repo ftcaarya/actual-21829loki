@@ -17,6 +17,7 @@ import com.acmerobotics.roadrunner.Vector2d;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
+import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.Gamepad;
 import com.qualcomm.robotcore.util.Range;
 
@@ -59,7 +60,8 @@ public class TeleOpTesting extends OpMode {
                 new ParallelAction(
                         robot.updateVertPID(),
                         robot.updateExtPID(),
-                        robot.rotateHor()
+                        robot.rotateHor(),
+                        robot.setExtTarget(100)
                 )
 
         );
@@ -91,6 +93,28 @@ public class TeleOpTesting extends OpMode {
 //                    )
 //            );
 //        }
+
+        if (gamepad1.dpad_right) {
+            runningActions.add(
+                    robot.setExtTarget(400)
+            );
+        }
+
+        if (gamepad1.dpad_left) {
+            runningActions.add(
+              robot.setExtTarget(-100)
+            );
+        }
+
+        if (gamepad1.dpad_up) {
+            runningActions.add(
+                    new SequentialAction(
+                            new InstantAction(() -> robot.extension.setMode(DcMotor.RunMode.STOP_AND_RESET_ENCODER)),
+                            new InstantAction(() -> robot.extension.setMode(DcMotor.RunMode.RUN_WITHOUT_ENCODER))
+                    )
+            );
+        }
+
         if (gamepad2.dpad_up) {
             runningActions.add(
                     robot.transfer()

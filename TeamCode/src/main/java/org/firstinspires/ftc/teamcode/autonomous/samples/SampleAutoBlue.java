@@ -81,23 +81,26 @@ public class SampleAutoBlue extends OpMode {
 
 
                                 )
-                                .setReversed(false)
+                                .setTangent(Math.toRadians(90))
+                                .splineToLinearHeading(new Pose2d(-61, -61, Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.setVertTarget(-2700),
+                                                new SleepAction(1),
                                                 new ParallelAction(
                                                         robot.rotateHor(),
                                                         robot.clawClose(),
                                                         robot.armUp(),
+                                                        new SleepAction(1),
                                                         robot.wristUp()
                                                 )
                                         )
                                 )
 
-                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                new SleepAction(0.6),
+                                                new SleepAction(0.8),
                                                 robot.clawOpen(),
                                                 new SleepAction(0.6),
                                                 robot.armWait(),
