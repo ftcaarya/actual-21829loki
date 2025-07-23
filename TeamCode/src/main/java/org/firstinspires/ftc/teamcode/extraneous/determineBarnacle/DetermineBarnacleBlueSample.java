@@ -20,7 +20,7 @@ import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
 import org.firstinspires.ftc.vision.VisionPortal;
 
-public class DetermineBarnacleSample {
+public class DetermineBarnacleBlueSample {
     public VisionPortal visionPortal;
     public ColourMassDetectionProcessor colourMassDetectionProcessor;
     static PinpointDrive drive;
@@ -34,7 +34,7 @@ public class DetermineBarnacleSample {
     private double minArea;
     private int left, right;
 
-    public DetermineBarnacleSample(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
+    public DetermineBarnacleBlueSample(double minArea, int left, int right, Pose2d poseGiven, HardwareMap hardwareMap, Gamepad gamepad1, Gamepad gamepad2, PinpointDrive drive, AllMechs robot) {
         pose = poseGiven;
         this.hardwareMap = hardwareMap; // Store as instance variable
         this.minArea = minArea;
@@ -149,7 +149,7 @@ public class DetermineBarnacleSample {
                                 new InstantAction(()-> robot.hold.setPosition(0.75)),
                                 robot.setExtTarget(-210),
                                 new SleepAction(1),
-                                robot.checkColorRed())
+                                robot.checkColorBlue())
 
                 )
 
@@ -209,7 +209,7 @@ public class DetermineBarnacleSample {
                                 new SleepAction(.5),
                                 robot.setExtTarget(-160),
                                 new SleepAction(1),
-                                robot.checkColorRed()
+                                robot.checkColorBlue()
 
                         )
                 )
@@ -269,7 +269,7 @@ public class DetermineBarnacleSample {
                                 robot.stopIntake(),
                                 robot.setExtTarget(-210),
                                 new SleepAction(1),
-                                robot.checkColorRed())
+                                robot.checkColorBlue())
 
                 )
 
@@ -288,7 +288,7 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(120)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-58.5, -58.5, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(-58, -59, Math.toRadians(45)), -Math.PI, new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.armDown(),
@@ -324,9 +324,9 @@ public class DetermineBarnacleSample {
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(.5),
-                                robot.setExtTarget(-310),
+                                robot.setExtTarget(-270),
                                 new SleepAction(1),
-                                robot.checkColorRed()
+                                robot.checkColorBlue()
 
                         )
                 )
@@ -386,13 +386,13 @@ public class DetermineBarnacleSample {
 
     private static void generateRightTrajectory() {
         targetSampleTrajectory = drive.actionBuilder(pose)
-                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(107), new TranslationalVelConstraint(100))                // intake sample
+                .strafeToLinearHeading(new Vector2d(-52, -43), Math.toRadians(104), new TranslationalVelConstraint(100))                // intake sample
                 .stopAndAdd(
                         new SequentialAction(
                                 robot.stopIntake(),
                                 robot.setExtTarget(-260),
                                 new SleepAction(1),
-                                robot.checkColorRed())
+                                robot.checkColorBlue())
 
                 )
                 .stopAndAdd(
@@ -411,7 +411,7 @@ public class DetermineBarnacleSample {
                                 robot.setExtTarget(100)
                         )
                 )
-                .splineToLinearHeading(new Pose2d(-60, -61, Math.toRadians(45)), Math.toRadians(180 + 120), new TranslationalVelConstraint(100))
+                .splineToLinearHeading(new Pose2d(-59, -59, Math.toRadians(45)), Math.toRadians(180 + 120), new TranslationalVelConstraint(100))
                 .stopAndAdd(
                         new SequentialAction(
                                 new SleepAction(0.5),
@@ -450,7 +450,7 @@ public class DetermineBarnacleSample {
                                 new SleepAction(.5),
                                 robot.setExtTarget(-350),
                                 new SleepAction(1),
-                                robot.checkColorRed()
+                                robot.checkColorBlue()
 
                         )
                 )

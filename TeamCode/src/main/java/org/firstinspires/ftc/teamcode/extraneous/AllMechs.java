@@ -94,7 +94,7 @@ public class AllMechs {
     public static int target = 0;
     public final double ticks_in_degree = 700/180.0;
 
-    public static double pe = 0.03, ie = 0, de = 0.0007;
+    public static double pe = 0.02, ie = 0, de = 0.0007;
 
     public static double pes = 0.04, ies = 0, des = 0.0007;
     public static int hor_target = 0;
@@ -372,7 +372,7 @@ public class AllMechs {
 
     public Action checkColorRed() {
         return p -> {
-            hold.setPosition(.76);
+            hold.setPosition(.73);
 
             if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_BLOCK);
@@ -391,6 +391,46 @@ public class AllMechs {
                 setHorTarget(20);
                 return false;
             } else if (colorSensor.blue() > colorSensor.green() + 50 && colorSensor.blue() > colorSensor.red() + 50) {
+                pooper.setPosition(POOPER_PASS);
+                gamepad1.setLedColor(0, 0, 225, 5000);
+                gamepad1.rumbleBlips(1);
+                intake.setPower(-.65);
+                return true;
+            } else if (gamepad2.square) {
+                pooper.setPosition(POOPER_BLOCK);
+                hold.setPosition(.3);
+                intake.setPower(0);
+                return false;
+            } else {
+                pooper.setPosition(POOPER_BLOCK);
+                intake.setPower(-.65);
+                return true;
+            }
+        };
+    }
+
+    public Action checkColorBlue() {
+        return p -> {
+            hold.setPosition(.73);
+
+            if (colorSensor.blue() > colorSensor.green() + 50 && colorSensor.blue() > colorSensor.red() + 50) {
+                pooper.setPosition(POOPER_BLOCK);
+                gamepad1.rumbleBlips(1);
+                gamepad1.setLedColor(255, 0, 0, 5000);
+                intake.setPower(0);
+                hold.setPosition(.3);
+                setHorTarget(20);
+                return false;
+            } else if ((colorSensor.green() > colorSensor.blue()) && (colorSensor.red() > colorSensor.blue())) {
+                pooper.setPosition(POOPER_BLOCK);
+                gamepad1.setLedColor(230, 230, 0, 5000);
+                gamepad1.rumbleBlips(1);
+                intake.setPower(0);
+                hold.setPosition(.3);
+                setHorTarget(20);
+                return false;
+
+            } else if (colorSensor.red() > colorSensor.green() + 50 && colorSensor.red() > colorSensor.blue() + 50) {
                 pooper.setPosition(POOPER_PASS);
                 gamepad1.setLedColor(0, 0, 225, 5000);
                 gamepad1.rumbleBlips(1);

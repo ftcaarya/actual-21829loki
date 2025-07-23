@@ -41,8 +41,8 @@ public class ColourMassDetectionOpMode extends OpMode {
 
         colourMassDetectionProcessor = new ColourMassDetectionProcessor(
                 () -> minArea, // these are lambda methods, in case we want to change them while the match is running, for us to tune them or something
-                () -> 150, // the left dividing line, in this case the left third of the frame
-                () -> 330 // the right dividing line, in this case the right third of the frame
+                () -> 400, // the left dividing line, in this case the left third of the frame
+                () -> 400 // the right dividing line, in this case the right third of the frame
         );
 
         visionPortal = new VisionPortal.Builder()

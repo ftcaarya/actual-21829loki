@@ -16,20 +16,21 @@ import com.qualcomm.robotcore.eventloop.opmode.OpMode;
 
 import org.firstinspires.ftc.teamcode.PinpointDrive;
 import org.firstinspires.ftc.teamcode.extraneous.AllMechs;
+import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleBlueSample;
 import org.firstinspires.ftc.teamcode.extraneous.determineBarnacle.DetermineBarnacleSample;
 import org.firstinspires.ftc.teamcode.vision.ColourMassDetectionProcessor;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Autonomous(name = "Sample Side Auto", group = "robot")
-public class SampleAuto extends OpMode {
-//    ActionSchedular actionSchedular;
-    DetermineBarnacleSample determineBarnacle;
+@Autonomous(name = "Sample Blue", group = "robot")
+public class SampleAutoBlue extends OpMode {
+    //    ActionSchedular actionSchedular;
+    DetermineBarnacleBlueSample determineBarnacle;
     PinpointDrive drive;
     private final FtcDashboard dash = FtcDashboard.getInstance();
     private List<Action> runningActions = new ArrayList<>();
-//    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
+    //    Pose2d startPose = new Pose2d(-35, -63, Math.toRadians(90));
     Pose2d passPose = new Pose2d(-50, -45, Math.toRadians(90));
     MultipleTelemetry mTelemetry;
     AllMechs robot;
@@ -50,7 +51,7 @@ public class SampleAuto extends OpMode {
         mTelemetry = new MultipleTelemetry(telemetry, FtcDashboard.getInstance().getTelemetry());
         robot = new AllMechs(hardwareMap, 200, 400, gamepad1, gamepad2);
 
-        determineBarnacle = new DetermineBarnacleSample(700, 100, 360, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
+        determineBarnacle = new DetermineBarnacleBlueSample(700, 100, 360, passPose, hardwareMap, gamepad1, gamepad2, drive, robot);
 
 //        onInit();
 
@@ -68,20 +69,20 @@ public class SampleAuto extends OpMode {
         TrajectoryActionBuilder builder = drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)));
 //        Action action = wholeSequence().build();
 
-            runningActions.add(
+        runningActions.add(
                 new ParallelAction(
                         new SequentialAction(drive.actionBuilder(new Pose2d(-35, -63, Math.toRadians(90)))
                                 .stopAndAdd( new ParallelAction(
                                                 new InstantAction(() -> robot.hold.setPosition(.3) ),
                                                 robot.rotateHor(),
                                                 robot.clawClose(),
-                                        robot.setExtTarget(100)
+                                                robot.setExtTarget(100)
                                         )
 
 
                                 )
                                 .setTangent(Math.toRadians(90))
-                                .splineToLinearHeading(new Pose2d(-59, -59 , Math.toRadians(45)), -Math.PI)
+                                .splineToLinearHeading(new Pose2d(-61, -61, Math.toRadians(45)), -Math.PI)
                                 .stopAndAdd(
                                         new SequentialAction(
                                                 robot.setVertTarget(-2700),
@@ -90,6 +91,7 @@ public class SampleAuto extends OpMode {
                                                         robot.rotateHor(),
                                                         robot.clawClose(),
                                                         robot.armUp(),
+                                                        new SleepAction(1),
                                                         robot.wristUp()
                                                 )
                                         )
@@ -98,7 +100,7 @@ public class SampleAuto extends OpMode {
 
                                 .stopAndAdd(
                                         new SequentialAction(
-                                                new SleepAction(2),
+                                                new SleepAction(0.8),
                                                 robot.clawOpen(),
                                                 new SleepAction(0.6),
                                                 robot.armWait(),
@@ -113,20 +115,20 @@ public class SampleAuto extends OpMode {
                                         new SequentialAction(
                                                 determineBarnacle.detectTarget(),
                                                 new InstantAction(() -> {
-                                                    ColourMassDetectionProcessor.PropPositions detected = DetermineBarnacleSample.getRecordedPosition();
+                                                    ColourMassDetectionProcessor.PropPositions detected = DetermineBarnacleBlueSample.getRecordedPosition();
 
                                                     telemetry.addData("=== DETECTION PHASE ===", "");
                                                     telemetry.addData("Detected Position", detected != null ? detected.toString() : "NULL");
                                                     telemetry.update();
 
                                                     telemetry.addData("=== GENERATION PHASE ===", "");
-                                                    DetermineBarnacleSample.generateTargetTrajectory();
+                                                    DetermineBarnacleBlueSample.generateTargetTrajectory();
 
-                                                    boolean hasTrajectory = DetermineBarnacleSample.hasTrajectory();
+                                                    boolean hasTrajectory = DetermineBarnacleBlueSample.hasTrajectory();
                                                     telemetry.addData("Trajectory Generated", hasTrajectory ? "YES" : "NO");
 
                                                     if (hasTrajectory) {
-                                                        Action traj = DetermineBarnacleSample.getTargetSampleTrajectory();
+                                                        Action traj = DetermineBarnacleBlueSample.getTargetSampleTrajectory();
                                                         if (traj != null) {
                                                             telemetry.addData("Adding trajectory to runningActions", "SUCCESS");
                                                             telemetry.addData("Current runningActions size", runningActions.size());
